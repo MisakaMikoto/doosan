@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="doosanProject:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="dooSanProject.war">
+      <element id="artifact" artifact-name="doosanProject:war exploded" />
+    </root>
+  </artifact>
+</component>
