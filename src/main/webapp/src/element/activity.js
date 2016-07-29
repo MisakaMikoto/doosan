@@ -16,8 +16,4 @@ class Activity extends Node {
     get folders() {
         return this._folders;
     }
-
-    createShape() {
-
-    }
 }

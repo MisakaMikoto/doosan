@@ -6,7 +6,7 @@ class ShapeRenderer extends Renderer {
         super();
     }
 
-    render(canvas) {
-        canvas.drawShape([this.x, this.y], this.shape, [this.width, this.height]);
+    render(canvas, object) {
+        canvas.drawShape([object.x, object.y], this.shape, [object.width, object.height]);
     }
 }

@@ -10,6 +10,12 @@ class Node {
 
         this._from = '';
         this._to = '';
+
+        this._x = '';
+        this._y = '';
+
+        this._width = '';
+        this._height = '';
     }
 
     set id(id) {
@@ -58,5 +64,37 @@ class Node {
 
     get from() {
         return this._from;
+    }
+
+    set x(x) {
+        this._x = x;
+    }
+
+    get x() {
+        return this._x;
+    }
+
+    set y(y) {
+        this._y = y;
+    }
+
+    get y() {
+        return this._y;
+    }
+
+    set width(width) {
+        this._width = width;
+    }
+
+    get width() {
+        return this._width;
+    }
+
+    set height(height) {
+        this._height = height;
+    }
+
+    get height() {
+        return this._height;
     }
 }
