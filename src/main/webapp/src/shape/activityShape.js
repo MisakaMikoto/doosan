@@ -1,28 +1,12 @@
 /**
- * Created by uengine on 2016. 7. 28..
+ * Created by MisakaMikoto on 2016. 7. 28..
  */
-class ActivityShape extends OG.shape.RectangleShape {
+class ActivityShape extends OG.shape.ImageShape {
     constructor(name) {
-        super(name);
-    }
+        super('/resources/activity.svg', name);
 
-    createShape() {
-        if (this.geom) {
-            return this.geom;
-        }
-
-        this.geom = new OG.geometry.Rectangle([0, 0], 200, 200);
-        this.geom.style = new OG.geometry.Style({
-            'fill': 'none',
-            'stroke': '#000000',
-            'stroke-width': 2,
-            'stroke-linecap': 'round',
-            'stroke-linejoin': 'miter',
-            'stroke-miterlimit': 10,
-            'stroke-dasharray': 'none',
-            'stroke-opacity': 1
-        });
-
-        return this.geom;
+        this.SHAPE_ID = 'OG.shape.doosan.activity';
+        this.LABEL_EDITABLE = false;
+        this.label = name;
     }
 }

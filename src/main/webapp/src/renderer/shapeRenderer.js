@@ -1,5 +1,5 @@
 /**
- * Created by uengine on 2016. 7. 29..
+ * Created by MisakaMikoto on 2016. 7. 29..
  */
 class ShapeRenderer extends Renderer {
     constructor() {

@@ -49,7 +49,8 @@
                 let layout = new Layout();
                 layout.createCanvas('canvas');
                 layout.createLayer(testData);
-                layout.drawLayer();
+                layout.drawLayerShape();
+//                layout.drawLayerEdge();
             });
         </script>
     </head>

@@ -60,7 +60,7 @@ class Layout {
         }
     }
 
-    drawLayer() {
+    drawLayerShape() {
         // activity count == layers size
         let layers = this.layers;
         for(let i in layers) {
@@ -96,9 +96,9 @@ class Layout {
         let shapeRenderer = new ShapeRenderer();
         shapeRenderer.width = 50;
         shapeRenderer.height = 50;
-        shapeRenderer.x = $('#canvas').width() / 2 - (shapeRenderer.width / 2) - (75 * folder.level);
+        shapeRenderer.x = $('#canvas').width() / 2 - (shapeRenderer.width / 2) - (120 * folder.level);
         shapeRenderer.y = 75 * (Number(index) + 1);
-        shapeRenderer.shape = new ActivityShape('folder');
+        shapeRenderer.shape = new FolderShape('folder');
         shapeRenderer.render(this.canvas);
     }
 
@@ -106,9 +106,45 @@ class Layout {
         let shapeRenderer = new ShapeRenderer();
         shapeRenderer.width = 50;
         shapeRenderer.height = 50;
-        shapeRenderer.x = $('#canvas').width() / 2 - (shapeRenderer.width / 2) - (75 * ed.level);
+        shapeRenderer.x = $('#canvas').width() / 2 - (shapeRenderer.width / 2) - (120 * ed.level);
         shapeRenderer.y = 75 * (Number(index) + 1);
-        shapeRenderer.shape = new ActivityShape('ed');
+        shapeRenderer.shape = new EDShape('ed');
         shapeRenderer.render(this.canvas);
     }
+
+    //drawLayerEdge() {
+    //    var allElements = [];
+    //
+    //    let layers = this.layers;
+    //    for(let i in layers) {
+    //        allElements.push(layers[i].activity);
+    //
+    //        let folders = layers[i].folders;
+    //        if(folders !== 'undefined' && folders.length > 0) {
+    //            for (let j in folders) {
+    //                allElements.push(folders[j])
+    //            }
+    //        }
+    //
+    //        let eds = layers[i].eds;
+    //        if(eds !== 'undefined' && eds.length > 0) {
+    //            for(let j in eds) {
+    //                allElements.push(eds[j])
+    //            }
+    //        }
+    //    }
+    //
+    //    var cloneAllElements = allElements.slice();
+    //    for(let i in allElements) {
+    //        for(let j in cloneAllElements) {
+    //            if(allElements[i].parentId == cloneAllElements[j].id) {
+    //                allElements[i].from = '[' + cloneAllElements[j].x + ', ' + cloneAllElements[j].y + ']';
+    //                allElements[i].to = '[' + allElements[i].x + ', ' + allElements[i].y + ']';
+    //
+    //                var edgeShape1 = new OG.EdgeShape([Number(cloneAllElements[j].x), Number(cloneAllElements[j].y)], [Number(allElements[i].x), Number(allElements[i].y)], '', 'from', 'to');
+    //                this.canvas.drawShape(null, edgeShape1, null, {'edge-type': 'plain', "arrow-start": "none", "arrow-end": "open-wide-long"});
+    //            }
+    //        }
+    //    }
+    //}
 }
