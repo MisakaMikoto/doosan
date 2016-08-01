@@ -43,14 +43,11 @@
                 let parser = new Parser();
                 let testData = parser.createTestData();
 
-//                console.log(testData);
-
                 // create commonLayout
                 let layout = new Layout();
                 layout.createCanvas('canvas');
                 layout.createLayer(testData);
                 layout.drawLayerShape();
-//                layout.drawLayerEdge();
             });
         </script>
     </head>
