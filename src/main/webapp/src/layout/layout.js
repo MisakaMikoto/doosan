@@ -100,6 +100,7 @@ class Layout {
                 }
             }
         }
+
     }
 
     renderActivityShape(activity) {
@@ -107,7 +108,7 @@ class Layout {
         activity.width = 50;
         activity.height = 50;
         activity.x = $('#canvas').width() / 2 - (activity.width / 2);
-        activity.y = 75 * (activity.index + 1);
+        activity.y = 90 * (activity.index + 1);
         shapeRenderer.shape = new ActivityShape(activity.name.toString());
         return shapeRenderer.render(this.canvas, activity);
     }
@@ -117,7 +118,7 @@ class Layout {
         folder.width = 50;
         folder.height = 50;
         folder.x = $('#canvas').width() / 2 - (folder.width / 2) - (120 * folder.level);
-        folder.y = 75 * (folder.index + 1);
+        folder.y = 90 * (folder.index + 1);
         shapeRenderer.shape = new FolderShape(folder.name.toString());
         return shapeRenderer.render(this.canvas, folder);
     }
@@ -127,13 +128,13 @@ class Layout {
         ed.width = 50;
         ed.height = 50;
         ed.x = $('#canvas').width() / 2 - (ed.width / 2) - (120 * ed.level);
-        ed.y = 75 * (ed.index + 1);
+        ed.y = 90 * (ed.index + 1);
         shapeRenderer.shape = new EDShape(ed.name.toString());
         return shapeRenderer.render(this.canvas, ed);
     }
 
     renderEdgeShape(fromShape, toShape) {
         let edgeRenderer = new EdgeRenderer();
-        return edgeRenderer.render(this.canvas, fromShape, toShape);
+        edgeRenderer.render(this.canvas, fromShape, toShape);
     }
 }
