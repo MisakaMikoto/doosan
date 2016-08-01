@@ -3,6 +3,5 @@
  */
 class Renderer {
     constructor() {
-        this._shape = '';
     }
 }

@@ -16,6 +16,8 @@ class Node {
 
         this._width = '';
         this._height = '';
+
+        this._index = '';
     }
 
     set id(id) {
@@ -43,11 +45,11 @@ class Node {
     }
 
     set level(level) {
-        this._level = level;
+        this._level = Number(level);
     }
 
     get level() {
-        return this._level;
+        return Number(this._level);
     }
 
     set to(to) {
@@ -67,34 +69,43 @@ class Node {
     }
 
     set x(x) {
-        this._x = x;
+        this._x = Number(x);
     }
 
     get x() {
-        return this._x;
+        return Number(this._x);
     }
 
     set y(y) {
-        this._y = y;
+        this._y = Number(y);
     }
 
     get y() {
-        return this._y;
+        return Number(this._y);
     }
 
     set width(width) {
-        this._width = width;
+        this._width = Number(width);
     }
 
     get width() {
-        return this._width;
+        return Number(this._width);
     }
 
     set height(height) {
-        this._height = height;
+        this._height = Number(height);
     }
 
     get height() {
-        return this._height;
+        return Number(this._height);
     }
+
+    set index(index) {
+        this._index = Number(index);
+    }
+
+    get index() {
+        return Number(this._index);
+    }
+
 }

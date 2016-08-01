@@ -5,4 +5,7 @@ class EdgeRenderer extends Renderer {
     constructor() {
         super();
     }
+    render(canvas, from, to) {
+        return canvas.connect(from, to);
+    }
 }

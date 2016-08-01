@@ -34,44 +34,64 @@ class Layer {
 
     create(activityJSONData) {
         var activityLevel = 0;
+        var beforeLastIndex = 0;
 
         let activity = new Activity();
         activity.id = activityJSONData.id;
         activity.name = activityJSONData.name;
         activity.level = activityLevel;
+        activity.index = beforeLastIndex;
 
         // find folders
-        let folderJSONData = activityJSONData._folders;
+        let folderJSONData = activityJSONData.folders;
         if(folderJSONData !== 'undefined' && folderJSONData.length > 0) {
             let folderLevel = activityLevel + 1;
 
             for(let i in folderJSONData) {
-                let folder = new Folder();
-                folder.id = folderJSONData[i].id;
-                folder.name = folderJSONData[i].name;
-                folder.parentId = activity.id;
-                folder.level = folderLevel;
-                this.folders.push(folder);
+                if(activity.id == folderJSONData[i].parentId) {
+                    let folder = new Folder();
+                    folder.id = folderJSONData[i].id;
+                    folder.name = folderJSONData[i].name;
+                    folder.parentId = activity.id;
+                    folder.level = folderLevel;
 
-                // find eds
-                let edJSONData = folderJSONData[i]._eds;
-                if(edJSONData !== 'undefined' && edJSONData.length > 0) {
-                    let edLevel = folderLevel + 1;
-
-                    for(let j in edJSONData) {
-                        let ed = new ED();
-                        ed.id = edJSONData[j].id;
-                        ed.name = edJSONData[j].name;
-                        ed.parentId = folder.id;
-                        ed.level = edLevel;
-                        this.eds.push(ed);
+                    // find child folder
+                    let childFolderJSONData = folderJSONData[i].folders;
+                    if(childFolderJSONData !== 'undefined' && childFolderJSONData.length > 0) {
+                        beforeLastIndex = this.recursiveFolder(childFolderJSONData, folder);
                     }
-                }
 
-                // find child folder
-                let childFolderJSONData = folderJSONData[i]._folders;
-                if(childFolderJSONData !== 'undefined' && childFolderJSONData.length > 0) {
-                    recursiveFolder(childFolderJSONData, folder);
+                    if(i == 0) {
+                        folder.index = activity.index;
+
+                    } else {
+                        folder.index = beforeLastIndex + Number(i);
+                    }
+                    this.folders.push(folder);
+
+                    // find eds
+                    let edJSONData = folderJSONData[i].eds;
+                    if(edJSONData !== 'undefined' && edJSONData.length > 0) {
+                        let edLevel = folderLevel + 1;
+
+                        for(let j in edJSONData) {
+                            if(folderJSONData[i].id == edJSONData[j].parentId) {
+                                let ed = new ED();
+                                ed.id = edJSONData[j].id;
+                                ed.name = edJSONData[j].name;
+                                ed.parentId = folder.id;
+                                ed.level = edLevel;
+
+                                if(j == 0) {
+                                    ed.index = folder.index;
+
+                                } else {
+                                    ed.index = folder.index + Number(j);
+                                }
+                                this.eds.push(ed);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -80,6 +100,7 @@ class Layer {
     }
 
     recursiveFolder(folderJSONData, rootFolder) {
+        var beforeLastIndex = 0;
         // find folder
         if(folderJSONData !== 'undefined' && folderJSONData.length > 0) {
             let folderLevel = rootFolder.level + 1;
@@ -90,29 +111,43 @@ class Layer {
                 folder.name = folderJSONData[i].name;
                 folder.parentId = rootFolder.id;
                 folder.level = folderLevel;
+                folder.index = rootFolder.index + Number(i);
                 this.folders.push(folder);
 
+                // save last index
+                beforeLastIndex = folder.index;
+
                 // find eds
-                let edJSONData = folderJSONData[i]._eds;
+                let edJSONData = folderJSONData[i].eds;
                 if(edJSONData !== 'undefined' && edJSONData.length > 0) {
                     let edLevel = folderLevel + 1;
 
                     for(let j in edJSONData) {
-                        let ed = new ED();
-                        ed.id = edJSONData[j].id;
-                        ed.name = edJSONData[j].name;
-                        ed.parentId = folder.id;
-                        ed.level = edLevel;
-                        this.eds.push(ed);
+                        if(folderJSONData[i].id == edJSONData[j].parentId) {
+                            let ed = new ED();
+                            ed.id = edJSONData[j].id;
+                            ed.name = edJSONData[j].name;
+                            ed.parentId = folder.id;
+                            ed.level = edLevel;
+
+                            if (j == 0) {
+                                ed.index = folder.index;
+
+                            } else {
+                                ed.index = folder.index + Number(j);
+                            }
+                            this.eds.push(ed);
+                        }
                     }
                 }
 
-                let childFolderJSONData = folderJSONData[i]._folders;
+                let childFolderJSONData = folderJSONData[i].folders;
                 if(childFolderJSONData !== 'undefined' && childFolderJSONData.length > 0) {
                     recursiveFolder(childFolderJSONData, folder);
 
                 }
             }
         }
+        return beforeLastIndex;
     }
 }
