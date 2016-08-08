@@ -15,14 +15,9 @@
         <script type="text/javascript" src="/lib/opengraph/OpenGraph-0.1.1-SNAPSHOT.js"></script>
 
         <!-- layout -->
-        <script type="text/javascript" src="/src/layout/layer.js"></script>
-        <script type="text/javascript" src="/src/layout/layout.js"></script>
-
-        <!-- object -->
-        <script type="text/javascript" src="/src/element/prototype/node.js"></script>
-        <script type="text/javascript" src="/src/element/activity.js"></script>
-        <script type="text/javascript" src="/src/element/folder.js"></script>
-        <script type="text/javascript" src="/src/element/ed.js"></script>
+        <script type="text/javascript" src="/src/layout/prototype/layout.js"></script>
+        <script type="text/javascript" src="/src/layout/editor/editorLayout.js"></script>
+        <script type="text/javascript" src="/src/layout/monitoring/monitoringLayout.js"></script>
 
         <!-- renderer -->
         <script type="text/javascript" src="/src/renderer/prototype/renderer.js"></script>
@@ -30,9 +25,14 @@
         <script type="text/javascript" src="/src/renderer/edgeRenderer.js"></script>
 
         <!-- shape -->
+        <script type="text/javascript" src="/src/shape/prototype/imageShape.js"></script>
         <script type="text/javascript" src="/src/shape/activityShape.js"></script>
         <script type="text/javascript" src="/src/shape/edShape.js"></script>
         <script type="text/javascript" src="/src/shape/folderShape.js"></script>
+        <script type="text/javascript" src="/src/shape/folderManager.js"></script>
+
+        <!-- shape event -->
+        <script type="text/javascript" src="/src/shape/event/folderManagerEvent.js"></script>
 
         <!-- parser -->
         <script type="text/javascript" src="/src/util/parser.js"></script>
@@ -40,14 +40,27 @@
         <script type="text/javascript">
             $(document).ready(function() {
                 // create test data
-                let parser = new Parser();
-                let testData = parser.createTestData();
+                let monitoringData = Parser.createMonitoringTestData();
+                let editorData = Parser.createEditorTestData();
 
-                // create commonLayout
-                let layout = new Layout();
-                layout.createCanvas('canvas');
-                layout.createLayer(testData);
-                layout.drawLayerShape();
+//                 create commonLayout
+                let monitoringLayout = new MonitoringLayout();
+                monitoringLayout.type = monitoringLayout;
+                monitoringLayout.createCanvas('canvas');
+                monitoringLayout.data = monitoringData;
+                monitoringLayout.drawMonitoring();
+
+//                let editorLayout = new EditorLayout();
+//                editorLayout.type = editorLayout;
+//                editorLayout.createCanvas('canvas');
+//                editorLayout.data = editorData;
+//                editorLayout.drawEditor();
+
+                // collapse unbind
+//                let folderManagerEvent = new FolderManagerEvent(editorLayout.canvas);
+                let folderManagerEvent = new FolderManagerEvent(monitoringLayout.canvas);
+                folderManagerEvent.unbind();
+                folderManagerEvent.bind();
             });
         </script>
     </head>

@@ -4,7 +4,6 @@
 class ShapeRenderer extends Renderer {
     constructor() {
         super();
-
         this._shape = '';
     }
 
@@ -16,8 +15,7 @@ class ShapeRenderer extends Renderer {
         return this._shape;
     }
 
-
-    render(canvas, object) {
-        return canvas.drawShape([object.x, object.y], this.shape, [object.width, object.height]);
+    render(canvas) {
+        return canvas.drawShape([this.shape.x, this.shape.y], this.shape, [this.shape.width, this.shape.height]);
     }
 }
