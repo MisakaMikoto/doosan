@@ -25,7 +25,7 @@ class EdgeRenderer extends Renderer {
         return this._to;
     }
 
-    render(canvas) {
-        return canvas.connect(this.from, this.to);
+    render() {
+        return this.canvas.connect(this.from, this.to, this.style);
     }
 }

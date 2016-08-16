@@ -8,6 +8,8 @@ class ActivityShape extends ImageShape {
 
         this._leftFolderShapes = [];
         this._rightFolderShapes = [];
+
+        this.CONNECTABLE = true;
     }
 
     set leftFolderShapes(leftFolderShapes) {

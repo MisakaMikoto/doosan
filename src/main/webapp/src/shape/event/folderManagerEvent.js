@@ -1,29 +1,17 @@
 /**
  * Created by MisakaMikoto on 2016. 8. 3..
  */
-class FolderManagerEvent {
-    constructor(canvas) {
-        this._canvas = canvas;
+class FolderManagerEvent extends ShapeEvent {
+    constructor() {
+        super();
     }
 
-    set canvas(canvas) {
-        this._canvas = canvas;
-    }
+    bindClick(shape) {
+        let self = this;
+        let layout = new Layout();
+        layout.canvas = this.canvas;
 
-    get canvas() {
-        return this._canvas;
-    }
-
-    unbind() {
-        $('#canvas').find('svg').find('g').find('[_shape_id="OG.shape.doosan.folderManager"]').each(function() {
-            $(this).unbind('click');
-        });
-    }
-
-    bind() {
-        var self = this;
-
-        $('#canvas').find('svg').find('g').find('[_shape_id="OG.shape.doosan.folderManager"]').bind('click', function() {
+        $(shape).bind('click', function() {
             if($(this).css('display') != 'none') {
                 let toEdges = $(this).attr('_toedge').split(',');
 
@@ -33,7 +21,7 @@ class FolderManagerEvent {
                 } else {
                     self.open(toEdges);
                 }
-                self.replace(this, toEdges, this.shape.direction, this.shape.type);
+                //layout.replace(this, toEdges, this.shape.direction, this.shape.type);
                 self.changeMode(this, this.shape.type);
             }
         });
@@ -62,43 +50,6 @@ class FolderManagerEvent {
                 let childToEdges = $('#' + to).attr('_toedge').split(',');
                 this.open(childToEdges);
             }
-        }
-    }
-
-    replace(folderManager, toEdges, direction, type) {
-        this.replaceShape(folderManager, toEdges[toEdges.length - 1], direction, type);
-        this.replaceEdge();
-    }
-
-    replaceShape(folderManager, lastToEdge, direction, type) {
-        var self = this;
-
-        let to = $('#' + lastToEdge).attr('_to').split('_TERMINAL')[0];
-        let lastShapeIndex = $('#' + to)[0].shape.index;
-
-        $('#canvas').find('svg').find('g').each(function() {
-            if($(this).attr('_type') == 'SHAPE' && this.shape.index > lastShapeIndex && this.shape.direction == direction) {
-                let offset = [];
-                offset.push(0);
-
-                if(type == 'close' && lastShapeIndex > folderManager.shape.index) {
-                    offset.push(0 - (90 * (lastShapeIndex - folderManager.shape.index)));
-
-                } else if(type == 'open' && lastShapeIndex > folderManager.shape.index){
-                    offset.push(0 + (90 * (lastShapeIndex + folderManager.shape.index)));
-
-                } else {
-                    offset.push(0);
-                }
-                self.canvas._RENDERER.move(this, offset);
-            }
-        });
-    }
-
-    replaceEdge() {
-        let allEdges = this.canvas._RENDERER.getAllEdges();
-        for(let i in allEdges) {
-            this.canvas._RENDERER.reconnect(allEdges[i]);
         }
     }
 

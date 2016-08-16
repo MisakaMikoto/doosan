@@ -5,7 +5,16 @@ class ImageShape extends OG.shape.ImageShape {
     constructor(src, name) {
         super(src, name);
 
+        this._src = src;
+
         this.LABEL_EDITABLE = false;
+        this.RESIZABLE = false;
+        this.MOVABLE = false;
+
+        this.CONNECT_CLONEABLE = false;
+        this.CONNECTABLE = false;
+        this.DELETABLE = false;
+
         this.label = name;
 
         this._x = '';
@@ -18,8 +27,16 @@ class ImageShape extends OG.shape.ImageShape {
         this._index = '';
 
         this._parentId = '';
-
         this._direction = '';
+        this._workFlowType = '';
+    }
+
+    set src(src) {
+        this._src = src;
+    }
+
+    get src() {
+        return this._src;
     }
 
     set x(x) {
@@ -84,5 +101,13 @@ class ImageShape extends OG.shape.ImageShape {
 
     get direction() {
         return this._direction;
+    }
+
+    set workFlowType(workFlowType) {
+        this._workFlowType = workFlowType;
+    }
+
+    get workFlowType() {
+        return this._workFlowType;
     }
 }

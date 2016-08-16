@@ -5,6 +5,7 @@ class ShapeRenderer extends Renderer {
     constructor() {
         super();
         this._shape = '';
+        this._option = '';
     }
 
     set shape(shape) {
@@ -15,7 +16,18 @@ class ShapeRenderer extends Renderer {
         return this._shape;
     }
 
-    render(canvas) {
-        return canvas.drawShape([this.shape.x, this.shape.y], this.shape, [this.shape.width, this.shape.height]);
+    set option(option) {
+        this._option = option;
+    }
+
+    get option() {
+        return this._option;
+    }
+
+    render() {
+        this.autoIncreaseCanvasSize(this.shape);
+        this.autoIncreaseLaneSize(this.shape);
+
+        return this.canvas.drawShape([this.shape.x, this.shape.y], this.shape, [this.shape.width, this.shape.height], this.option);
     }
 }
