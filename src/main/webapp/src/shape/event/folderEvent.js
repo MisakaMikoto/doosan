@@ -79,49 +79,7 @@ class FolderEvent extends ShapeEvent {
     share(sourceShape, targetShape, canvas) {
         let editorLayout = new EditorLayout();
         editorLayout.canvas = canvas;
-
-        let folderManager = editorLayout.getLeftFolderManager(targetShape);
-
-        let targetRightAllParent = [];
-        targetRightAllParent.push(targetShape);
-        targetRightAllParent = editorLayout.getShapeAllParents(targetShape, targetRightAllParent);
-
-        let sourceShapeAllParent = [];
-        sourceShapeAllParent.push(sourceShape);
-        sourceShapeAllParent = editorLayout.getShapeAllParents(sourceShape, sourceShapeAllParent);
-        sourceShapeAllParent = editorLayout.createUniqueArray(sourceShapeAllParent, targetRightAllParent);
-
-
-        let beforeShape = folderManager;
-        if (sourceShapeAllParent.length > 0) {
-            if (targetRightAllParent.length > 0) {
-                for (let i in targetRightAllParent) {
-                    let parentShape = targetRightAllParent[i];
-                    parentShape.shape.direction = 'left';
-
-                    for (let j in sourceShapeAllParent) {
-                        let shape = sourceShapeAllParent[j];
-
-                        if (parentShape.shape.id == shape.shape.parentId) {
-                            shape.shape.direction = 'left';
-                            let parentFolderManager = editorLayout.getLeftFolderManager(parentShape);
-                            beforeShape = parentFolderManager;
-
-                            let createdFolderShape = editorLayout.renderFolderShape(shape.shape, beforeShape);
-                            editorLayout.renderEdgeShape(beforeShape, createdFolderShape);
-
-                            if(j != sourceShapeAllParent.length - 1) {
-                                let createdFolderManagerShape = editorLayout.renderFolderManagerShape(createdFolderShape, 'left');
-                                editorLayout.renderEdgeShape(createdFolderShape, createdFolderManagerShape);
-
-                                beforeShape = createdFolderManagerShape;
-                                parentShape = createdFolderShape;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        editorLayout.renderShare(sourceShape, targetShape);
     }
 
     validateLevel(selectedFolderShape) {

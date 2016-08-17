@@ -215,4 +215,57 @@ class EditorLayout extends Layout {
 
         return renderFolderManagerShape;
     }
+
+    renderShare(sourceShape, targetShape) {
+        let folderManager = this.getLeftFolderManager(targetShape);
+
+        let targetRightAllParent = [];
+        targetRightAllParent.push(targetShape);
+        targetRightAllParent = this.getShapeAllParents(targetShape, targetRightAllParent);
+
+        let sourceShapeAllParent = [];
+        sourceShapeAllParent.push(sourceShape);
+        sourceShapeAllParent = this.getShapeAllParents(sourceShape, sourceShapeAllParent);
+        sourceShapeAllParent = this.createUniqueArray(sourceShapeAllParent, targetRightAllParent);
+
+        let beforeShape = folderManager;
+        if (sourceShapeAllParent.length > 0) {
+            if (targetRightAllParent.length > 0) {
+                for (let i in targetRightAllParent) {
+                    let parentShape = targetRightAllParent[i];
+                    parentShape.shape.direction = 'left';
+
+                    for (let j in sourceShapeAllParent) {
+                        let shape = sourceShapeAllParent[j];
+
+                        if (parentShape.shape.id == shape.shape.parentId) {
+                            shape.shape.direction = 'left';
+                            let parentFolderManager = this.getLeftFolderManager(parentShape);
+                            beforeShape = parentFolderManager;
+
+                            let createdShape = null;
+                            if(shape.shape instanceof FolderShape) {
+                                createdShape = this.renderFolderShape(shape.shape, beforeShape);
+
+                            } else if(shape.shape instanceof EDShape) {
+                                createdShape = this.renderEDShape(shape.shape, beforeShape);
+
+                            } else {
+                                ;
+                            }
+                            this.renderEdgeShape(beforeShape, createdShape);
+
+                            if(j != sourceShapeAllParent.length - 1) {
+                                let createdFolderManagerShape = this.renderFolderManagerShape(createdShape, 'left');
+                                this.renderEdgeShape(createdShape, createdFolderManagerShape);
+
+                                beforeShape = createdFolderManagerShape;
+                                parentShape = createdShape;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
