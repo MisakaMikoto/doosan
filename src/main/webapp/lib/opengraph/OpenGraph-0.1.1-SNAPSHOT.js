@@ -18013,8 +18013,10 @@ OG.renderer.RaphaelRenderer.prototype.connect = function (from, to, edge, style,
         isEssensia = $(fromShape).attr("_shape_id").indexOf('OG.shape.essencia') !== -1;
     }
     if (!isEssensia) {
-        edge.shape.geom.style.map['arrow-start'] = 'none';
-        edge.shape.geom.style.map['arrow-end'] = 'block';
+        if(typeof style == 'undefined' || style == null || style.length == 0 || style == '') {
+            edge.shape.geom.style.map['arrow-start'] = 'none';
+            edge.shape.geom.style.map['arrow-end'] = 'block';
+        }
         edge = this.drawEdge(new OG.PolyLine(vertices), edge.shape.geom.style, edge ? edge.id : null, isSelf);
     }
     if (isEssensia) {
@@ -22956,10 +22958,10 @@ OG.renderer.RaphaelRenderer.prototype.trimEdgeDirection = function (edge, fromSh
         points.push([fRight + ((tLeft - fRight) / 2), toP.y]);
         points.push([toP.x, toP.y]);
 
-    } else if(fRight < tLeft) {
+    } else if(fLeft > tRight) {
         points.push([fromP.x, fromP.y]);
-        points.push([fLeft + ((fLeft - tRight) / 2), fromP.y]);
-        points.push([fLeft + ((fLeft - tRight) / 2), toP.y]);
+        points.push([fLeft + ((tRight - fLeft) / 2), fromP.y]);
+        points.push([fLeft + ((tRight - fLeft) / 2), toP.y]);
         points.push([toP.x, toP.y]);
 
     } else {
@@ -30803,7 +30805,7 @@ OG.graph.Canvas.prototype = {
         toPosition = [toPosition.x, toPosition.y];
 
         // draw edge
-        edge = this._RENDERER.drawShape(null, new OG.EdgeShape(fromPosition, toPosition));
+        edge = this._RENDERER.drawShape(null, new OG.EdgeShape(fromPosition, toPosition), null, style);
         edge = this._RENDERER.trimEdgeDirection(edge, fromElement, toElement);
 
         // connect

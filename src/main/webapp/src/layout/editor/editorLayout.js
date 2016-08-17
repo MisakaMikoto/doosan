@@ -38,12 +38,12 @@ class EditorLayout extends Layout {
         activityShape.height = 50;
 
         if(activityShape.workFlowType == 'otherWorkFlow') {
-            activityShape.x = 50;
+            activityShape.x = 50 + 15;
 
         } else {
             let firstOtherFlowLane = this.getFirstOtherFLowLaneShape();
             let lastOtherFlowLane = this.getLastOtherFLowLaneShape();
-            activityShape.x = firstOtherFlowLane.shape.x + lastOtherFlowLane.shape.width + (lastOtherFlowLane.shape.x + (lastOtherFlowLane.shape.width / 2)) - 12.5;
+            activityShape.x = firstOtherFlowLane.shape.x + lastOtherFlowLane.shape.width + (lastOtherFlowLane.shape.x + (lastOtherFlowLane.shape.width / 2));
 
         }
         activityShape.y = 90 * (activityShape.index + 1);
@@ -67,14 +67,15 @@ class EditorLayout extends Layout {
         if(workFlowType == 'otherWorkFlow') {
             // activity lane
             if(laneShape.laneType == 'center') {
-                laneShape.width = 50 + 30 + (75 / 2) + 7.5 - 2;
+                // activityShape width + margin + folderManager width - 5
+                laneShape.width = 50 + 75 + 15 - 2;
                 laneShape.x = (laneShape.width / 2) + 2;
 
             } else if(laneShape.laneType == 'right') {
 
                 let lastOtherFlowLane = this.getLastOtherFLowLaneShape();
-                // activitiy width : 50, folderManager : 50, margin : 75
-                laneShape.width = (50 * lastChild.shape.level) + (30 * lastChild.shape.level) + (75 * lastChild.shape.level);
+                // activity width : 50, folderManager : 20, margin : 75
+                laneShape.width = (50 * lastChild.shape.level) + (20 * lastChild.shape.level) + (75 * lastChild.shape.level);
                 laneShape.x = lastOtherFlowLane.shape.x + (lastOtherFlowLane.shape.width / 2) + (laneShape.width / 2);
 
             } else {
@@ -172,6 +173,9 @@ class EditorLayout extends Layout {
         let edgeRenderer = new EdgeRenderer();
         edgeRenderer.from = fromShape;
         edgeRenderer.to = toShape;
+        if(!(fromShape.shape instanceof ActivityShape)) {
+            edgeRenderer.style = {'edge-type': 'plain', "arrow-start": "none", "arrow-end": "none"};
+        }
         edgeRenderer.canvas = this.canvas;
         let renderEdgeShape = edgeRenderer.render();
 

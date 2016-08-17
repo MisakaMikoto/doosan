@@ -110,11 +110,13 @@ class FolderEvent extends ShapeEvent {
                             let createdFolderShape = editorLayout.renderFolderShape(shape.shape, beforeShape);
                             editorLayout.renderEdgeShape(beforeShape, createdFolderShape);
 
-                            let createdFolderManagerShape = editorLayout.renderFolderManagerShape(createdFolderShape, 'left');
-                            editorLayout.renderEdgeShape(createdFolderShape, createdFolderManagerShape);
+                            if(j != sourceShapeAllParent.length - 1) {
+                                let createdFolderManagerShape = editorLayout.renderFolderManagerShape(createdFolderShape, 'left');
+                                editorLayout.renderEdgeShape(createdFolderShape, createdFolderManagerShape);
 
-                            beforeShape = createdFolderManagerShape;
-                            parentShape = createdFolderShape;
+                                beforeShape = createdFolderManagerShape;
+                                parentShape = createdFolderShape;
+                            }
                         }
                     }
                 }

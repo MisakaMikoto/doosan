@@ -124,11 +124,11 @@ class MonitoringLayout extends Layout {
         let edgeRenderer = new EdgeRenderer();
         edgeRenderer.from = fromShape;
         edgeRenderer.to = toShape;
+        if(!(fromShape.shape instanceof ActivityShape)) {
+            edgeRenderer.style = {'edge-type': 'plain', "arrow-start": "none", "arrow-end": "none"};
+        }
         edgeRenderer.canvas = this.canvas;
-        let renderEdgeShape = edgeRenderer.render();
-
-        let edgeEvent = new EdgeEvent();
-        edgeEvent.canvas = this.canvas;
+        edgeRenderer.render();
     }
 
     renderFolderManagerShape(shape, direction) {

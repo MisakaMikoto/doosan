@@ -7,6 +7,7 @@ class EdgeRenderer extends Renderer {
 
         this._from = '';
         this._to = '';
+        this._style = '';
     }
 
     set from(from) {
@@ -23,6 +24,14 @@ class EdgeRenderer extends Renderer {
 
     get to() {
         return this._to;
+    }
+
+    set style(style) {
+        this._style = new OG.geometry.Style(style);
+    }
+
+    get style() {
+        return this._style;
     }
 
     render() {
