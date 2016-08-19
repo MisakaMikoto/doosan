@@ -25,9 +25,15 @@ class ShapeRenderer extends Renderer {
     }
 
     render() {
-        this.autoIncreaseCanvasSize(this.shape);
-        this.autoIncreaseLaneSize(this.shape);
+        // edge
+        if(this.shape instanceof EdgeShape) {
+            return this.canvas.drawShape(null, this.shape, null, {'edge-type': 'plain',"arrow-start": "none", "arrow-end": "none" });
 
-        return this.canvas.drawShape([this.shape.x, this.shape.y], this.shape, [this.shape.width, this.shape.height], this.option);
+        } else {
+            this.autoIncreaseCanvasSize(this.shape);
+            this.autoIncreaseLaneSize(this.shape);
+
+            return this.canvas.drawShape([this.shape.x, this.shape.y], this.shape, [this.shape.width, this.shape.height], this.option);
+        }
     }
 }

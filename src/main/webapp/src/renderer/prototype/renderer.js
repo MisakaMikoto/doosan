@@ -72,31 +72,4 @@ class Renderer {
             this.canvas._RENDERER.setCanvasSize([svgWidth, (shape.y + (shape.height / 2) + 75)]);
         }
     }
-
-    replaceShape(targetShape, direction, moveLevel) {
-        let offset = [];
-        let x = 0;
-        if(direction == 'right') {
-            x += 75 * moveLevel;
-        } else {
-            x -= 75 * moveLevel;
-        }
-        let y = 0;
-
-        offset.push(x);
-        offset.push(y);
-
-        this.autoIncreaseCanvasSize(targetShape.shape);
-        this.autoIncreaseLaneSize(targetShape.shape);
-
-        this.canvas._RENDERER.move(targetShape, offset);
-        this.replaceEdge();
-    }
-
-    replaceEdge() {
-        let allEdges = this.canvas._RENDERER.getAllEdges();
-        for(let i in allEdges) {
-            this.canvas._RENDERER.reconnect(allEdges[i]);
-        }
-    }
 }

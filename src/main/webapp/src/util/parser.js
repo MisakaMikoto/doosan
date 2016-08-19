@@ -83,13 +83,13 @@ class Parser {
         let lane1 = new LaneShape('otherWorkFlowLane');
         lane1.id = 'otherWorkFlowLane';
         lane1.name = 'otherWorkFlowLane';
-        lane1.children = 'Activity1';
+        lane1.children = ['Activity1'];
         lane1.laneType = 'center';
 
         let lane2 = new LaneShape('otherWorkFlowLane');
         lane2.id = 'otherWorkFlowLane';
         lane2.name = 'otherWorkFlowLane';
-        lane2.children = 'F1,F1-1,F1-2,F2,ED1,ED2,ED3,ED4';
+        lane2.children = ['F1','F1-1','F1-2','F2','ED1','ED2','ED3','ED4'];
         lane2.laneType = 'right';
 
         f1_1.edShapes.push(ed1);
@@ -116,28 +116,28 @@ class Parser {
         data.laneShapes = [];
         data.workFlowType = 'myWorkFlow';
 
-        let activity1 = new ActivityShape("Line List");
-        activity1.id = 'Activity1';
-        activity1.name = 'Line List 작성';
-        activity1.parentId = '';
-
-        let activity2 = new ActivityShape("FA");
+        let activity2 = new ActivityShape("Line List");
         activity2.id = 'Activity2';
-        activity2.name = 'FA 제출';
+        activity2.name = 'Line List 작성';
         activity2.parentId = '';
+
+        let activity3 = new ActivityShape("FA");
+        activity3.id = 'Activity3';
+        activity3.name = 'FA 제출';
+        activity3.parentId = '';
 
         // first folders
         let f10 = new FolderShape("F10");
         f10.id = 'F10';
         f10.name = 'F10';
-        f10.parentId = 'Activity1';
+        f10.parentId = 'Activity2';
         f10.direction = 'right';
 
         // second folder
         let f20 = new FolderShape("F20");
         f20.id = 'F20';
         f20.name = 'F20';
-        f20.parentId = 'Activity1';
+        f20.parentId = 'Activity2';
         f20.direction = 'right';
 
         // child folder
@@ -185,13 +185,13 @@ class Parser {
         let lane1 = new LaneShape('myWorkFlowLane');
         lane1.id = 'myWorkFlowLane';
         lane1.name = 'myWorkFlowLane';
-        lane1.children = 'Activity1';
+        lane1.children = ['Activity2','Activity3'];
         lane1.laneType = 'center';
 
         let lane2 = new LaneShape('myWorkFlowLane');
         lane2.id = 'myWorkFlowLane';
         lane2.name = 'myWorkFlowLane';
-        lane2.children = 'F1,F1-1,F1-2,F2,ED1,ED2,ED3,ED4';
+        lane2.children = ['F1','F1-1','F1-2','F2','ED1','ED2','ED3','ED4'];
         lane2.laneType = 'right';
 
         let lane3 = new LaneShape('myWorkFlowLane');
@@ -207,11 +207,11 @@ class Parser {
         f10.folderShapes.push(f10_1);
         f10.folderShapes.push(f10_2);
 
-        activity1.rightFolderShapes.push(f10);
-        activity1.rightFolderShapes.push(f20);
+        activity2.rightFolderShapes.push(f10);
+        activity2.rightFolderShapes.push(f20);
 
-        data.activityShapes.push(activity1);
         data.activityShapes.push(activity2);
+        data.activityShapes.push(activity3);
         // 반드시 순서대로 넣어야 한다. left, center, right
         data.laneShapes.push(lane3);
         data.laneShapes.push(lane1);

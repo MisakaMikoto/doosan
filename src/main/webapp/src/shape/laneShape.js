@@ -15,7 +15,7 @@ class LaneShape extends OG.GroupShape {
         this.CONNECTABLE = false;
         this.DELETABLE = false;
 
-        this._children = '';
+        this._children = [];
         this._laneType = '';
     }
 

@@ -290,17 +290,6 @@ class Layout {
 
     }
 
-    getLastChildInLaneShape(lastChildId) {
-        let lastChild = null;
-        $('[_shape="IMAGE"]').each(function() {
-            if(this.shape.id == lastChildId) {
-                lastChild = this;
-                return false;
-            }
-        });
-        return lastChild;
-    }
-
     getFirstOtherFLowLaneShape() {
         let standardLaneShape = $('[_shape_id="OG.shape.doosan.otherWorkFlowLane"]')[0];
         $('[_shape_id="OG.shape.doosan.otherWorkFlowLane"]').each(function () {
@@ -352,19 +341,6 @@ class Layout {
         return standardLaneShape;
     }
 
-    getShapeLeftAllChildren(shape, children) {
-        let nextShapes = this.canvas._RENDERER.getNextShapes(shape);
-        if(nextShapes.length > 0) {
-            for(let i in nextShapes) {
-                if( (nextShapes[i].shape instanceof FolderShape && nextShapes[i].shape.direction == 'left') ) {
-                    children.push(nextShapes[i]);
-                }
-                this.getShapeLeftAllChildren(nextShapes[i], children);
-            }
-        }
-        return children;
-    }
-
     getShapeRightAllChildren(shape, children) {
         let nextShapes = this.canvas._RENDERER.getNextShapes(shape);
         if(nextShapes.length > 0) {
@@ -379,92 +355,44 @@ class Layout {
         return children;
     }
 
-    getLeftFolderManager(shape) {
-        let folderManager = null;
-        let nextShapes = this.canvas._RENDERER.getNextShapes(shape);
-
-        for(let i in nextShapes) {
-            if(nextShapes[i].shape.direction == 'left') {
-                folderManager = nextShapes[i];
-                break;
-            }
-        }
-        return folderManager;
-    }
-
-    getRightFolderManager(shape) {
-        let folderManager = null;
-        let nextShapes = this.canvas._RENDERER.getNextShapes(shape);
-
-        for(let i in nextShapes) {
-            if(nextShapes[i].shape.direction == 'right') {
-                folderManager = nextShapes[i];
-                break;
-            }
-        }
-        return folderManager;
-    }
-
-    getShapeAllParents(shape, parents) {
-        let prevShapes = this.canvas._RENDERER.getPrevShapes(shape);
-        if(prevShapes.length > 0) {
-            for(let i in prevShapes) {
-                if(prevShapes[i].shape instanceof FolderShape ||
-                    prevShapes[i].shape instanceof EDShape) {
-                    parents.splice(0, 0, prevShapes[i]);
+    setReplaceLaneChildren(laneShape) {
+        let replaceChildren = [];
+        let children = laneShape.children;
+        for(let i in children) {
+            $('[_shape="IMAGE"]').each(function() {
+                if(this.shape.id == children[i]) {
+                    replaceChildren.push(this.id);
                 }
-                this.getShapeAllParents(prevShapes[i], parents);
-            }
+            });
         }
-        return parents;
+        laneShape.children = replaceChildren;
+        return laneShape;
     }
 
-    isInTarget(ui) {
-        let shape = null;
-        $('[_shape="IMAGE"]').each(function() {
-            let shapeOffset = $(this).offset();
-
-            // shape width and height 50 + plus margin area
-            let shapeTop = shapeOffset.top - 25;
-            let shapeBottom = shapeOffset.top + 50 + 25;
-            let shapeLeft = shapeOffset.left - 25;
-            let shapeRight = shapeOffset.left + 50 + 25;
-
-            // 25 is shapes margin area size
-            let draggableTop = ui.position.top;
-            let draggableBottom = ui.position.top + 50;
-            let draggableLeft = ui.position.left;
-            let draggableRight = ui.position.left; + 50;
-
-            if( ((shapeBottom >= draggableBottom) && (draggableBottom >= shapeTop))
-                && ((shapeBottom >= draggableTop) && (draggableTop >= shapeTop))
-                && ((shapeLeft <= draggableLeft) && (draggableLeft <= shapeRight))
-                && ((shapeLeft <= draggableRight) && (draggableLeft <= shapeRight)) ) {
-
-                shape = this;
-                return false;
-            }
-        });
-        return shape;
-    }
-
-    createShapeSpan(ui, src) {
-        let pngSrc = src.split('.')[0] + '.png';
-        $('#draggable').css('display', 'block');
-        $('#draggable').css('background-image', 'url(' + pngSrc +')');
-        $('#draggable').offset({top: ui.position.top, left: ui.position.left});
-    }
-
-    createUniqueArray(standardArray, compareArray) {
-        for(let i in standardArray) {
-            if(compareArray.length > 0) {
-                for(let j in compareArray) {
-                    if (standardArray[i].shape.id == compareArray[j].shape.id) {
-                        standardArray.splice(i, 1);
-                    }
-                }
-            }
+    replaceShape(targetShape, direction, moveLevel) {
+        let offset = [];
+        let x = 0;
+        if(direction == 'right') {
+            x += 75 * moveLevel;
+        } else {
+            x -= 75 * moveLevel;
         }
-        return standardArray;
+        let y = 0;
+
+        offset.push(x);
+        offset.push(y);
+
+        this.autoIncreaseCanvasSize(targetShape.shape);
+        this.autoIncreaseLaneSize(targetShape.shape);
+
+        this.canvas._RENDERER.move(targetShape, offset);
+        this.replaceEdge();
+    }
+
+    replaceEdge() {
+        let allEdges = this.canvas._RENDERER.getAllEdges();
+        for(let i in allEdges) {
+            this.canvas._RENDERER.reconnect(allEdges[i]);
+        }
     }
 }

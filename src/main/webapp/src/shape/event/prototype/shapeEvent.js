@@ -34,7 +34,9 @@ class ShapeEvent {
                 $('#draggable').offset({top: standardSpanOffset.top, left: standardSpanOffset.left});
 
                 let target = editorLayout.isInTarget(ui);
-                if (typeof target != 'undefined' && target != null) {
+                if ( (typeof target != 'undefined' && target != null)
+                    && (target.shape instanceof FolderShape || target.shape instanceof ActivityShape) ) {
+
                     if (shape.shape instanceof FolderShape) {
                         let folderEvent = new FolderEvent();
                         folderEvent.share(this, target, self.canvas);
@@ -55,7 +57,25 @@ class ShapeEvent {
         let items = null;
 
         if(layoutType == 'editorLayout') {
-            if (shape.shape instanceof EDShape) {
+            if (shape.shape instanceof ActivityShape || shape.shape instanceof FolderShape){
+                if(typeof shape.shape.edShapes != 'undefined' && shape.shape.edShapes.length > 0) {
+                    items = {
+                        'addED': {name: 'Add ED', icon: 'edit'},
+                        'remove': {name: 'Remove', icon: 'delete'},
+                        'properties': {name: 'Properties', icon: 'edit'},
+                        'listProperties': {name: 'List Properties', icon: 'edit'}
+                    }
+                } else {
+                    items = {
+                        'addFolder': {name: 'Add Folder', icon: 'edit'},
+                        'addED': {name: 'Add ED', icon: 'edit'},
+                        'remove': {name: 'Remove', icon: 'delete'},
+                        'properties': {name: 'Properties', icon: 'edit'},
+                        'listProperties': {name: 'List Properties', icon: 'edit'}
+                    }
+                }
+
+            } else if (shape.shape instanceof EDShape) {
                 if (workFlowType == 'otherWorkFlow') {
                     items = {
                         'properties': {name: 'Properties', icon: 'edit'},
@@ -70,19 +90,13 @@ class ShapeEvent {
                     }
                 }
 
-            } else if (shape.shape instanceof OG.EdgeShape) {
+            } else if (shape.shape instanceof EdgeShape) {
                 items = {
                     'remove': {name: 'Remove', icon: 'delete'}
                 }
 
             } else {
-                items = {
-                    'addFolder': {name: 'Add Folder', icon: 'edit'},
-                    'addED': {name: 'Add ED', icon: 'edit'},
-                    'remove': {name: 'Remove', icon: 'delete'},
-                    'properties': {name: 'Properties', icon: 'edit'},
-                    'listProperties': {name: 'List Properties', icon: 'edit'}
-                }
+                ;
             }
 
         } else if(layoutType == 'monitoringLayout'){

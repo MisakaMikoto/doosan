@@ -40,6 +40,7 @@
         <script type="text/javascript" src="/src/shape/edShape.js"></script>
         <script type="text/javascript" src="/src/shape/folderShape.js"></script>
         <script type="text/javascript" src="/src/shape/laneShape.js"></script>
+        <script type="text/javascript" src="/src/shape/edgeShape.js"></script>
         <script type="text/javascript" src="/src/shape/folderManager.js"></script>
 
         <!-- shape event -->

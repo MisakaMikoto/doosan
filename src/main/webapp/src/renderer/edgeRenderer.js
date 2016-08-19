@@ -7,6 +7,7 @@ class EdgeRenderer extends Renderer {
 
         this._from = '';
         this._to = '';
+        this._edge = '';
         this._style = '';
     }
 
@@ -26,6 +27,14 @@ class EdgeRenderer extends Renderer {
         return this._to;
     }
 
+    set edge(edge) {
+        this._edge = edge;
+    }
+
+    get edge() {
+        return this._edge;
+    }
+
     set style(style) {
         this._style = new OG.geometry.Style(style);
     }
@@ -35,6 +44,9 @@ class EdgeRenderer extends Renderer {
     }
 
     render() {
-        return this.canvas.connect(this.from, this.to, this.style);
+        let fromTerminal = this.canvas._RENDERER.createDefaultTerminalString(this.from);
+        let toTerminal = this.canvas._RENDERER.createDefaultTerminalString(this.to);
+
+        return this.canvas._RENDERER.connect(fromTerminal, toTerminal, this.edge, this.style);
     }
 }

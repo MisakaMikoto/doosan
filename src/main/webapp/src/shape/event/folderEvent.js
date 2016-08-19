@@ -6,6 +6,7 @@ class FolderEvent extends ShapeEvent {
         super();
     }
 
+    // TODO : editorLayout refactoring
     add(selectedFolderShape, canvas) {
         if(this.validateLevel(selectedFolderShape)) {
             alert('Folder Maximum Level is 6. Failed Create Folder !!');
@@ -16,15 +17,14 @@ class FolderEvent extends ShapeEvent {
 
             let children = editorLayout.getShapeRightAllChildren(selectedFolderShape, []);
             let folderManager = editorLayout.getRightFolderManager(selectedFolderShape);
-            let folderManagerNextShape = canvas._RENDERER.getNextShapes(folderManager);
 
-            if(typeof folderManagerNextShape != 'undefined' && folderManagerNextShape[0].shape instanceof EDShape) {
-                this.insert(editorLayout, folderManager, folderManagerNextShape, selectedFolderShape);
+            if(typeof selectedFolderShape.shape == 'undefined' && selectedFolderShape.shape.edShapes.length == 0 && selectedFolderShape.shape.folderShapes.length > 0) {
+                this.insert(editorLayout, folderManager, selectedFolderShape);
 
             } else {
                 let folderShape = new FolderShape();
                 folderShape.parentId = selectedFolderShape.shape.id;
-                folderShape.index = (children.length == 0) ? selectedFolderShape.shape.index : children[children.length - 1].shape.index + 1;
+                folderShape.index = (children.length == 0) ? selectedFolderShape.shape.index : children.pop().shape.index + 1;
                 folderShape.level = folderManager.shape.level + 1;
                 folderShape.direction = 'right';
                 folderShape.workFlowType = selectedFolderShape.shape.workFlowType;
@@ -38,7 +38,10 @@ class FolderEvent extends ShapeEvent {
         }
     }
 
-    insert(editorLayout, folderManager, folderManagerNextShape, selectedFolderShape) {
+    // TODO : editorLayout refactoring
+    insert(editorLayout, folderManager, selectedFolderShape) {
+        let folderManagerNextShape = editorLayout.canvas._RENDERER.getNextShapes(folderManager);
+
         let folderShape = new FolderShape();
         folderShape.parentId = selectedFolderShape.shape.id;
         folderShape.index = folderManager.shape.index;
@@ -80,6 +83,10 @@ class FolderEvent extends ShapeEvent {
         let editorLayout = new EditorLayout();
         editorLayout.canvas = canvas;
         editorLayout.renderShare(sourceShape, targetShape);
+    }
+
+    remove() {
+
     }
 
     validateLevel(selectedFolderShape) {

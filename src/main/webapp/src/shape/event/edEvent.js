@@ -6,18 +6,18 @@ class EDEvent extends ShapeEvent{
         super();
     }
 
+    // TODO : editorLayout refactoring
     add(selectedFolderShape, canvas) {
         let editorLayout = new EditorLayout();
         editorLayout.canvas = canvas;
 
         let children = editorLayout.getShapeRightAllChildren(selectedFolderShape, []);
         let folderManager = editorLayout.getRightFolderManager(selectedFolderShape);
-        let folderManagerNextShape = canvas._RENDERER.getNextShapes(folderManager);
 
         let edShape = new EDShape();
         edShape.parent = selectedFolderShape.shape.id;
-        edShape.index = (children.length == 0) ? selectedFolderShape.shape.index : children[children.length - 1].shape.index + 1;
-        edShape.level = (children.length == 0) ? folderManager.shape.level + 1 : children[children.length - 1].shape.level;
+        edShape.index = (children.length == 0) ? selectedFolderShape.shape.index : children.pop().shape.index + 1;
+        edShape.level = (children.length == 0) ? folderManager.shape.level + 1 : children.pop().shape.level;
         edShape.direction = 'right';
         edShape.workFlowType = selectedFolderShape.shape.workFlowType;
 
@@ -29,5 +29,9 @@ class EDEvent extends ShapeEvent{
         let editorLayout = new EditorLayout();
         editorLayout.canvas = canvas;
         editorLayout.renderShare(sourceShape, targetShape);
+    }
+
+    remove() {
+
     }
 }

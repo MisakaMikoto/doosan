@@ -8,60 +8,99 @@ class FolderManagerEvent extends ShapeEvent {
 
     bindClick(shape) {
         let self = this;
+
         let layout = new Layout();
         layout.canvas = this.canvas;
 
         $(shape).bind('click', function() {
-            if($(this).css('display') != 'none') {
-                let toEdges = $(this).attr('_toedge').split(',');
+            let sharedFolderManager = self.getSharedFolderManager(this);
+            let sharedNextShapes = self.canvas._RENDERER.getNextShapes(sharedFolderManager);
+            let sharedAllFolderManager = sharedFolderManager.concat(this);
 
-                if(this.shape.type == 'close') {
-                    self.close(toEdges);
+            let nextShapes = self.canvas._RENDERER.getNextShapes(this);
+            let sharedAllNextShapes = nextShapes.concat(sharedNextShapes);
 
-                } else {
-                    self.open(toEdges);
-                }
-                //layout.replace(this, toEdges, this.shape.direction, this.shape.type);
-                self.changeMode(this, this.shape.type);
+            if(this.shape.type == 'close') {
+                self.close(sharedAllNextShapes);
+
+            } else if(this.shape.type == 'open') {
+                self.open(sharedAllNextShapes);
+
+            } else {
+                ;
             }
+            self.changeMode(sharedAllFolderManager, this.shape.type);
+            //layout.replace(this, toEdges, this.shape.direction, this.shape.type);
         });
     }
 
-    close(toEdges) {
-        for(let i in toEdges) {
-            let to = $('#' + toEdges[i]).attr('_to').split('_TERMINAL')[0];
-            $('#' + to).css('display', 'none');
-            $('#' + toEdges[i]).css('display', 'none');
+    close(sharedAllNextShapes) {
+        let nextShapeChildShapes = [];
+        for(let i in sharedAllNextShapes) {
+            let nextShape = sharedAllNextShapes[i];
+            $(nextShape).css('display', 'none');
 
-            if(typeof $('#' + to).attr('_toedge') != 'undefined') {
-                let childToEdges = $('#' + to).attr('_toedge').split(',');
-                this.close(childToEdges);
+            nextShapeChildShapes = nextShapeChildShapes.concat(this.canvas._RENDERER.getNextShapes(nextShape));
+
+            let prevEdges = this.canvas._RENDERER.getPrevEdges(nextShape);
+            for(let i in prevEdges) {
+                let prevEdge = prevEdges[i];
+                $(prevEdge).css('display', 'none');
             }
+        }
+
+        if(nextShapeChildShapes.length > 0) {
+            this.close(nextShapeChildShapes);
         }
     }
 
-    open(toEdges) {
-        for(let i in toEdges) {
-            let to = $('#' + toEdges[i]).attr('_to').split('_TERMINAL')[0];
-            $('#' + to).css('display', '');
-            $('#' + toEdges[i]).css('display', '');
+    open(sharedAllNextShapes) {
+        let nextShapeChildShapes = [];
+        for(let i in sharedAllNextShapes) {
+            let nextShape = sharedAllNextShapes[i];
+            $(nextShape).css('display', '');
 
-            if(typeof $('#' + to).attr('_toedge') != 'undefined') {
-                let childToEdges = $('#' + to).attr('_toedge').split(',');
-                this.open(childToEdges);
+            nextShapeChildShapes = nextShapeChildShapes.concat(this.canvas._RENDERER.getNextShapes(nextShape));
+
+            let prevEdges = this.canvas._RENDERER.getPrevEdges(nextShape);
+            for(let i in prevEdges) {
+                let prevEdge = prevEdges[i];
+                $(prevEdge).css('display', '');
             }
+        }
+
+        if(nextShapeChildShapes.length > 0) {
+            this.open(nextShapeChildShapes);
         }
     }
 
-    changeMode(collapse, type) {
+    changeMode(sharedAllFolderManager, type) {
         if(type == 'close') {
-            $('#' + collapse.id)[0].shape.type = 'open';
-            $('#' + collapse.id).find('image').attr('href', 'resources/expand.svg');
+            for(let i in sharedAllFolderManager) {
+                let folderManager = sharedAllFolderManager[i];
+
+                $(folderManager)[0].shape.type = 'open';
+                $(folderManager).find('image').attr('href', 'resources/expand.svg');
+            }
 
         } else {
-            $('#' + collapse.id)[0].shape.type = 'close';
-            $('#' + collapse.id).find('image').attr('href', 'resources/collapse.svg');
+            for(let i in sharedAllFolderManager) {
+                let folderManager = sharedAllFolderManager[i];
 
+                $(folderManager)[0].shape.type = 'close';
+                $(folderManager).find('image').attr('href', 'resources/collapse.svg');
+            }
         }
+    }
+
+    getSharedFolderManager(selectedFolderManager) {
+        let sharedFolderManager = [];
+        $('[_shape_id="OG.shape.doosan.folderManager"]').each(function() {
+            if(this.shape.id == selectedFolderManager.shape.id) {
+                sharedFolderManager.push(this);
+            }
+            return false;
+        });
+        return sharedFolderManager;
     }
 }
