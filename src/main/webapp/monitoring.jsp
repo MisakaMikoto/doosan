@@ -39,6 +39,7 @@
   <script type="text/javascript" src="/src/shape/folderShape.js"></script>
   <script type="text/javascript" src="/src/shape/laneShape.js"></script>
   <script type="text/javascript" src="/src/shape/folderManager.js"></script>
+  <script type="text/javascript" src="/src/shape/edgeShape.js"></script>
 
   <!-- shape event -->
   <script type="text/javascript" src="/src/shape/event/prototype/shapeEvent.js"></script>
