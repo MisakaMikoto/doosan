@@ -187,10 +187,9 @@ class EditorLayout extends Layout {
         edgeRenderer.canvas = this.canvas;
         let connectEdgeShape = edgeRenderer.render();
 
-        let edgeEvent = new EdgeEvent();
-        edgeEvent.canvas = this.canvas;
-
         if(fromShape.shape.workFlowType == 'myWorkFlow' || toShape.shape.workFlowType == 'myWorkFLow') {
+            let edgeEvent = new EdgeEvent();
+            edgeEvent.canvas = this.canvas;
             edgeEvent.bindContextMenu(connectEdgeShape, 'myWorkFlow', 'editorLayout');
         }
     }
@@ -245,6 +244,9 @@ class EditorLayout extends Layout {
         sourceShapeAllElement = this.createUniqueArray(sourceShapeAllElement, targetRightAllParent);
         sourceShapeAllElement = this.sortSharedArray(sourceShapeAllElement);
 
+        let currentLevel = targetFolderManager.shape.level;
+        let parentShape = targetFolderManager;
+
         if (sourceShapeAllElement.length > 0) {
             // 최상위 레벨 폴더만 parentId 변경
             for(let i in sourceShapeAllElement) {
@@ -261,11 +263,12 @@ class EditorLayout extends Layout {
 
                 let createdShape = null;
                 if(shape.shape instanceof FolderShape) {
-                    createdShape = this.renderFolderShape(shape.shape);
-                    let createdFolderManagerShape = this.renderFolderManagerShape(createdShape, 'left');
-
+                    createdShape = this.renderFolderShape(shape.shape, parentShape);
                     this.renderEdgeShape(targetFolderManager, createdShape);
-                    //this.renderEdgeShape(createdShape, createdFolderManagerShape);
+
+
+                    let createdFolderManagerShape = this.renderFolderManagerShape(createdShape, 'left');
+                    this.renderEdgeShape(createdShape, createdFolderManagerShape);
 
                 } else if(shape.shape instanceof EDShape) {
                     createdShape = this.renderEDShape(shape.shape);

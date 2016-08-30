@@ -295,19 +295,19 @@ class Parser {
         let lane1 = new LaneShape('myWorkFlowLane');
         lane1.id = 'myWorkFlowLane';
         lane1.name = 'myWorkFlowLane';
-        lane1.children = 'Activity1';
+        lane1.children = ['Activity1'];
         lane1.laneType = 'center';
 
         let lane2 = new LaneShape('myWorkFlowLane');
         lane2.id = 'myWorkFlowLane';
         lane2.name = 'myWorkFlowLane';
-        lane2.children = 'F10,F10-1,F10-2,F20,ED10,ED20,ED30,ED40';
+        lane2.children = ['F10', 'F10-1', 'F10-2', 'F20', 'ED10', 'ED20', 'ED30', 'ED40'];
         lane2.laneType = 'right';
 
         let lane3 = new LaneShape('myWorkFlowLane');
         lane3.id = 'myWorkFlowLane';
         lane3.name = 'myWorkFlowLane';
-        lane3.children = 'F1,F1-1,F1-2,F2,ED1,ED2,ED3,ED4';
+        lane3.children = ['F1', 'F1-1', 'F1-2', 'F2' , 'ED1' , 'ED2', 'ED3' , 'ED4'];
         lane3.laneType = 'left';
 
         f10_1.edShapes.push(ed10);

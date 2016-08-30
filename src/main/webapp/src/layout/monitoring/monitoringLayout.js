@@ -59,8 +59,9 @@ class MonitoringLayout extends Layout {
     }
 
     renderLaneShape(laneShape) {
-        let children = laneShape.children.split(',');
-        let lastChild = this.getLastChildInLaneShape(children[children.length - 1]);
+        laneShape = this.setReplaceLaneChildren(laneShape);
+        let laneShapeChildren = laneShape.children;
+        let lastChild = $('#' + laneShapeChildren.pop())[0];
 
         if(laneShape.laneType == 'center') {
             laneShape.width = lastChild.shape.width + 75 + 25;
@@ -121,12 +122,17 @@ class MonitoringLayout extends Layout {
     }
 
     renderEdgeShape(fromShape, toShape) {
+        let edgeShape = new EdgeShape([0, 0], [0, 0]);
+        let shapeRenderer = new ShapeRenderer();
+        shapeRenderer.canvas = this.canvas;
+        shapeRenderer.shape = edgeShape;
+        let renderEdgeShape = shapeRenderer.render();
+
         let edgeRenderer = new EdgeRenderer();
         edgeRenderer.from = fromShape;
         edgeRenderer.to = toShape;
-        if(!(fromShape.shape instanceof ActivityShape)) {
-            edgeRenderer.style = {'edge-type': 'plain', "arrow-start": "none", "arrow-end": "none"};
-        }
+        edgeRenderer.edge = renderEdgeShape;
+        edgeRenderer.style = {'edge-type': 'plain', "arrow-start": "none", "arrow-end": "none"};
         edgeRenderer.canvas = this.canvas;
         edgeRenderer.render();
     }
