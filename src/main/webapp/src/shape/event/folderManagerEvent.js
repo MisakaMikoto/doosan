@@ -27,8 +27,10 @@ class FolderManagerEvent extends ShapeEvent {
             } else {
                 ;
             }
+
+            layout.replace(event.currentTarget)
             this.changeMode(sharedAllFolderManager, event.currentTarget.shape.type);
-            //layout.replace(this, toEdges, this.shape.direction, this.shape.type);
+
         });
     }
 

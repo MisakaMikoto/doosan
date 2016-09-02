@@ -223,43 +223,60 @@ class EditorLayout extends Layout {
         return renderFolderManagerShape;
     }
 
-    // critical
+    // critical method
     renderShare(sourceShape, targetShape) {
-        //let sourceFolderManager = this.getRightFolderManager(sourceShape);
-        //
-        //let sourceShapeAllElement = this.getShapeAllParent(sourceFolderManager, []);
-        //sourceShapeAllElement = this.getShapeAllChild(sourceFolderManager, sourceShapeAllElement);
-        //sourceShapeAllElement = this.createUniqueArray(sourceShapeAllElement, targetRightAllParent);
-        //sourceShapeAllElement = this.sortSharedArrayByLevel(sourceShapeAllElement);
+        //let targetFolderManager = this.getLeftFolderManager(targetShape);
 
-        let targetFolderManager = this.getLeftFolderManager(targetShape);
         let sourceParentElements = this.getShapeAllParent(sourceShape, []);
-        let beforeShape = targetFolderManager;
 
-        let targetAllElement = this.getShapeAllParent(targetShape, []);
-        targetAllElement = this.getShapeAllChild(targetFolderManager, targetAllElement);
-
-        if(targetAllElement.length > 0) {
-            let sourceShapeParent = this.findSourceShapeParent(sourceShape, targetAllElement);
-            sourceParentElements = this.createUniqueArray(sourceParentElements, targetAllElement);
-
-            beforeShape = this.canvas._RENDERER.getNextShapes(sourceShapeParent)[0];
-        }
+        let targetAllElement = [];
+        targetAllElement.push(targetShape);
+        targetAllElement = this.getShapeAllParent(targetShape, targetAllElement);
+        targetAllElement = this.getShapeAllChild(targetShape, targetAllElement);
+        sourceParentElements = this.createUniqueArray(sourceParentElements, targetAllElement);
 
         // folder 혹은 ed 를 자식의 어떤 도형에 떨구어도 부모를 찾는 유도 로직
         // critical
-        if (sourceParentElements.length > 0) {
-            sourceParentElements = this.changeSharedInformation(sourceParentElements, targetShape);
-            // draw parent
-            beforeShape = this.renderShareParent(beforeShape, sourceParentElements);
+        if(targetAllElement.length > 0) {
+            let tempShape = null;
+
+            // target 이 액티비티인 경우
+            if(targetShape.shape instanceof ActivityShape) {
+                // source 의 부모가 있는 경우
+                if(sourceParentElements.length > 0 && targetAllElement.length == 1) {
+                    tempShape = this.changeSharedInformation(sourceParentElements, targetShape)[0];
+
+                // 없는 경우
+                } else {
+                    tempShape = sourceShape;
+                    tempShape = this.changeSharedInformation(tempShape, targetShape);
+                }
+
+            // 폴더인 경우
+            } else if(targetShape.shape instanceof FolderShape) {
+                tempShape = sourceShape;
+
+            } else {
+                ;
+            }
+
+            let shapeParent = this.findSourceShapeParent(tempShape, targetAllElement);
+            let beforeShape = this.getLeftFolderManager(shapeParent);
+
+            // 부모를 찾지 못하면 도형을 붙이지 않는다.
+            if(typeof shapeParent != 'undefined' && shapeParent != null) {
+                // draw parent
+                if(sourceParentElements.length > 0) {
+                    beforeShape = this.renderShareParent(beforeShape, sourceParentElements);
+                }
+                // draw source
+                this.renderShareSource(sourceShape, beforeShape, targetShape);
+
+            } else {
+                ;
+            }
+
         }
-
-        // draw source
-        beforeShape = this.renderShareSource(sourceShape, beforeShape);
-
-        // 여기부터 작업 shareChidl 는 shareSource 안에서 동작하게 변경.
-        // draw child
-        this.renderShareChild(sourceShape, beforeShape, targetShape);
     }
 
     renderShareParent(beforeShape, sourceParentElements) {
@@ -289,7 +306,7 @@ class EditorLayout extends Layout {
         return beforeShape;
     }
 
-    renderShareSource(sourceShape, beforeShape) {
+    renderShareSource(sourceShape, beforeShape, targetShape) {
         sourceShape = this.changeSharedInformation(sourceShape);
 
         // draw source
@@ -302,6 +319,10 @@ class EditorLayout extends Layout {
             this.renderEdgeShape(createdSourceShape, createdSourceFolderManagerShape);
 
             beforeShape = createdSourceFolderManagerShape;
+
+            if(sourceShape.shape.folderShapes.length > 0 || sourceShape.shape.edShapes.length > 0) {
+                this.renderShareChild(sourceShape, beforeShape, targetShape);
+            }
 
         } else if(sourceShape.shape instanceof EDShape) {
             createdSourceShape = this.renderFolderShape(sourceShape.shape, beforeShape);
@@ -464,8 +485,6 @@ class EditorLayout extends Layout {
                             standardArray.splice(i, 1);
                         }
 
-                    } else {
-                        break;
                     }
                 }
             }
@@ -513,14 +532,21 @@ class EditorLayout extends Layout {
         return folderManager;
     }
 
-    getShapeAllParent(folderManager, parents) {
-        let prevShapes = this.canvas._RENDERER.getPrevShapes(folderManager);
+    getShapeAllParent(targetShape, parents) {
+        let prevShapes = this.canvas._RENDERER.getPrevShapes(targetShape);
         if(prevShapes.length > 0) {
             for(let i in prevShapes) {
                 let prevShape = prevShapes[i];
 
-                if(prevShape.shape instanceof FolderShape) {
-                    parents.splice(0, 0, prevShape);
+                if(targetShape.shape.direction == 'left') {
+                    if (prevShape.shape instanceof ActivityShape || prevShape.shape instanceof FolderShape) {
+                        parents.splice(0, 0, prevShape);
+                    }
+
+                } else {
+                    if (prevShape.shape instanceof FolderShape) {
+                        parents.splice(0, 0, prevShape);
+                    }
                 }
                 this.getShapeAllParent(prevShape, parents);
             }
@@ -528,41 +554,16 @@ class EditorLayout extends Layout {
         return parents;
     }
 
-    getShapeChild(childFolderManager, children) {
-        let childNextShapes = this.canvas._RENDERER.getNextShapes(childFolderManager);
-        if (childNextShapes.length > 0) {
-            for (let i in childNextShapes) {
-                let childNextShape = childNextShapes[i];
-
-                if (childNextShape.shape instanceof FolderShape ||
-                    childNextShape.shape instanceof EDShape) {
-                    children.push(childNextShape);
-
-                    let childFolderManager = this.canvas._RENDERER.getNextShapes(childNextShape);
-                    if(childFolderManager.length > 0) {
-                        this.getShapeChild(childFolderManager, children);
-                    }
-                }
-            }
-        }
-        return children;
-    }
-
-    getShapeAllChild(folderManager, children) {
-        let nextShapes = this.canvas._RENDERER.getNextShapes(folderManager);
+    getShapeAllChild(targetShape, children) {
+        let nextShapes = this.canvas._RENDERER.getNextShapes(targetShape);
         if (nextShapes.length > 0) {
             for (let i in nextShapes) {
                 let nextShape = nextShapes[i];
 
-                if (nextShape.shape instanceof FolderShape ||
-                    nextShape.shape instanceof EDShape) {
+                if ( (nextShape.shape instanceof FolderShape || nextShape.shape instanceof EDShape) && nextShape.shape.direction == 'left') {
                     children.push(nextShape);
-
-                    let childFolderManager = this.canvas._RENDERER.getNextShapes(nextShape);
-                    if(childFolderManager.length > 0) {
-                        children.concat(this.getShapeChild(childFolderManager, children));
-                    }
                 }
+                this.getShapeAllChild(nextShape, children);
             }
         }
         return children;
@@ -600,6 +601,9 @@ class EditorLayout extends Layout {
             return object;
 
         } else {
+            if (object.shape.level == 1) {
+                object.shape.parentId = targetShape.shape.id;
+            }
             object.shape.level = -(object.shape.level);
             object.shape.direction = 'left';
 

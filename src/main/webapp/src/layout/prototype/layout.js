@@ -369,7 +369,7 @@ class Layout {
         return laneShape;
     }
 
-    replaceShape(targetShape, direction, moveLevel) {
+    replace(targetShape, direction, moveLevel) {
         let offset = [];
         let x = 0;
         if(direction == 'right') {
