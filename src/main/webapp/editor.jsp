@@ -11,7 +11,7 @@
     <head>
         <title> DooSan OpenGraph - Editor </title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
         <!-- included jquery, jquery-ui, jquery.contextmenu, opengraph -->
         <script type="text/javascript" src="/lib/jquery-1.11.1/jquery-1.11.1.min.js"></script>

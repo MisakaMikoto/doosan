@@ -7,29 +7,27 @@ class FolderManagerEvent extends ShapeEvent {
     }
 
     bindClick(shape) {
-        let self = this;
-
         let layout = new Layout();
         layout.canvas = this.canvas;
 
-        $(shape).bind('click', function() {
-            let sharedFolderManager = self.getSharedFolderManager(this);
-            let sharedNextShapes = self.canvas._RENDERER.getNextShapes(sharedFolderManager);
-            let sharedAllFolderManager = sharedFolderManager.concat(this);
+        $(shape).bind('click', (event) => {
+            let sharedFolderManager = this.getSharedFolderManager(event.currentTarget);
+            let sharedNextShapes = this.canvas._RENDERER.getNextShapes(sharedFolderManager);
+            let sharedAllFolderManager = sharedFolderManager.concat(event.currentTarget);
 
-            let nextShapes = self.canvas._RENDERER.getNextShapes(this);
+            let nextShapes = this.canvas._RENDERER.getNextShapes(event.currentTarget);
             let sharedAllNextShapes = nextShapes.concat(sharedNextShapes);
 
-            if(this.shape.type == 'close') {
-                self.close(sharedAllNextShapes);
+            if(event.currentTarget.shape.type == 'close') {
+                this.close(sharedAllNextShapes);
 
-            } else if(this.shape.type == 'open') {
-                self.open(sharedAllNextShapes);
+            } else if(event.currentTarget.shape.type == 'open') {
+                this.open(sharedAllNextShapes);
 
             } else {
                 ;
             }
-            self.changeMode(sharedAllFolderManager, this.shape.type);
+            this.changeMode(sharedAllFolderManager, event.currentTarget.shape.type);
             //layout.replace(this, toEdges, this.shape.direction, this.shape.type);
         });
     }
@@ -95,9 +93,9 @@ class FolderManagerEvent extends ShapeEvent {
 
     getSharedFolderManager(selectedFolderManager) {
         let sharedFolderManager = [];
-        $('[_shape_id="OG.shape.doosan.folderManager"]').each(function() {
-            if(this.shape.id == selectedFolderManager.shape.id) {
-                sharedFolderManager.push(this);
+        $('[_shape_id="OG.shape.doosan.folderManager"]').each((index, element) => {
+            if(element.shape.id == selectedFolderManager.shape.id) {
+                sharedFolderManager.push(element);
             }
             return false;
         });

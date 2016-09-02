@@ -46,14 +46,12 @@ class Renderer {
                 }
 
                 if(shapeBottom > nearLaneBottom) {
-                    let self = this;
-
-                    $('[_shape_id="OG.shape.doosan.otherWorkFlowLane"]').each(function() {
-                        self.canvas._RENDERER.resize(this, [0, (shapeBottom - nearLaneBottom) / 2, 0, 0]);
+                    $('[_shape_id="OG.shape.doosan.otherWorkFlowLane"]').each(() => {
+                        this.canvas._RENDERER.resize(this, [0, (shapeBottom - nearLaneBottom) / 2, 0, 0]);
                     });
 
-                    $('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each(function() {
-                        self.canvas._RENDERER.resize(this, [0, (shapeBottom - nearLaneBottom) / 2, 0, 0]);
+                    $('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each(() => {
+                        this.canvas._RENDERER.resize(this, [0, (shapeBottom - nearLaneBottom) / 2, 0, 0]);
                     });
                 }
             }

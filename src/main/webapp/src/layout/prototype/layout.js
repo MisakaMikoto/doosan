@@ -269,20 +269,20 @@ class Layout {
     }
 
     sendLaneToBack() {
-        $('[_shape_id="OG.shape.doosan.otherWorkFlowLane"]').each(function() {
-            $(this).attr('_selected', 'true');
+        $('[_shape_id="OG.shape.doosan.otherWorkFlowLane"]').each((index, element) => {
+            $(element).attr('_selected', 'true');
         });
 
-        $('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each(function() {
-           $(this).attr('_selected', 'true');
+        $('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each((index, element) => {
+           $(element).attr('_selected', 'true');
         });
         this.canvas._HANDLER.sendToBack();
     }
 
     replaceTop() {
         let fixedOtherWorkFlowWidth = 0;
-        $('[_shape_id="OG.shape.doosan.otherWorkFlowLane"]').each(function() {
-            fixedOtherWorkFlowWidth += this.shape.width;
+        $('[_shape_id="OG.shape.doosan.otherWorkFlowLane"]').each((index, element) => {
+            fixedOtherWorkFlowWidth += element.shape.width;
         });
 
         $('#otherWorkFlow').width(fixedOtherWorkFlowWidth);
@@ -292,9 +292,9 @@ class Layout {
 
     getFirstOtherFLowLaneShape() {
         let standardLaneShape = $('[_shape_id="OG.shape.doosan.otherWorkFlowLane"]')[0];
-        $('[_shape_id="OG.shape.doosan.otherWorkFlowLane"]').each(function () {
-            if (standardLaneShape.shape.x > this.shape.x) {
-                standardLaneShape = this;
+        $('[_shape_id="OG.shape.doosan.otherWorkFlowLane"]').each((index, element) => {
+            if (standardLaneShape.shape.x > element.shape.x) {
+                standardLaneShape = element;
             }
         });
         return standardLaneShape;
@@ -302,9 +302,9 @@ class Layout {
 
     getLastOtherFLowLaneShape() {
         let standardLaneShape = $('[_shape_id="OG.shape.doosan.otherWorkFlowLane"]')[0];
-        $('[_shape_id="OG.shape.doosan.otherWorkFlowLane"]').each(function () {
-            if (standardLaneShape.shape.x < this.shape.x) {
-                standardLaneShape = this;
+        $('[_shape_id="OG.shape.doosan.otherWorkFlowLane"]').each((index, element) => {
+            if (standardLaneShape.shape.x < element.shape.x) {
+                standardLaneShape = element;
             }
         });
         return standardLaneShape;
@@ -312,9 +312,9 @@ class Layout {
 
     getFirstMyFLowLaneShape() {
         let standardLaneShape = $('[_shape_id="OG.shape.doosan.myWorkFlowLane"]')[0];
-        $('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each(function () {
-            if (standardLaneShape.shape.x > this.shape.x) {
-                standardLaneShape = this;
+        $('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each((index, element) => {
+            if (standardLaneShape.shape.x > element.shape.x) {
+                standardLaneShape = element;
             }
         });
         return standardLaneShape;
@@ -322,9 +322,9 @@ class Layout {
 
     getCenterMyFLowLaneShape() {
         let centerMyFlowLane = null;
-        $('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each(function () {
+        $('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each((index, element) => {
             if(this.shape.laneType == 'center') {
-                centerMyFlowLane = this;
+                centerMyFlowLane = element;
                 return false;
             }
         });
@@ -333,9 +333,9 @@ class Layout {
 
     getLastMyFLowLaneShape() {
         let standardLaneShape = $('[_shape_id="OG.shape.doosan.myWorkFlowLane"]')[0];
-        $('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each(function () {
-            if (standardLaneShape.shape.x < this.shape.x) {
-                standardLaneShape = this;
+        $('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each((index, element) => {
+            if (standardLaneShape.shape.x < element.shape.x) {
+                standardLaneShape = element;
             }
         });
         return standardLaneShape;
@@ -359,9 +359,9 @@ class Layout {
         let replaceChildren = [];
         let children = laneShape.children;
         for(let i in children) {
-            $('[_shape="IMAGE"]').each(function() {
-                if(this.shape.id == children[i]) {
-                    replaceChildren.push(this.id);
+            $('[_shape="IMAGE"]').each((index, element) => {
+                if(element.shape.id == children[i]) {
+                    replaceChildren.push(element.id);
                 }
             });
         }

@@ -24,34 +24,34 @@
   <script type="text/javascript" src="/lib/opengraph/OpenGraph-0.1.1-SNAPSHOT.js"></script>
 
   <!-- layout -->
-  <script type="text/javascript" src="/src/layout/prototype/layout.js"></script>
-  <script type="text/javascript" src="/src/layout/monitoring/monitoringLayout.js"></script>
+  <script type="text/javascript" src="/srcES5/layout/prototype/layout.js"></script>
+  <script type="text/javascript" src="/srcES5/layout/monitoring/monitoringLayout.js"></script>
 
   <!-- renderer -->
-  <script type="text/javascript" src="/src/renderer/prototype/renderer.js"></script>
-  <script type="text/javascript" src="/src/renderer/shapeRenderer.js"></script>
-  <script type="text/javascript" src="/src/renderer/edgeRenderer.js"></script>
+  <script type="text/javascript" src="/srcES5/renderer/prototype/renderer.js"></script>
+  <script type="text/javascript" src="/srcES5/renderer/shapeRenderer.js"></script>
+  <script type="text/javascript" src="/srcES5/renderer/edgeRenderer.js"></script>
 
   <!-- shape -->
-  <script type="text/javascript" src="/src/shape/prototype/imageShape.js"></script>
-  <script type="text/javascript" src="/src/shape/activityShape.js"></script>
-  <script type="text/javascript" src="/src/shape/edShape.js"></script>
-  <script type="text/javascript" src="/src/shape/folderShape.js"></script>
-  <script type="text/javascript" src="/src/shape/laneShape.js"></script>
-  <script type="text/javascript" src="/src/shape/folderManager.js"></script>
-  <script type="text/javascript" src="/src/shape/edgeShape.js"></script>
+  <script type="text/javascript" src="/srcES5/shape/prototype/imageShape.js"></script>
+  <script type="text/javascript" src="/srcES5/shape/activityShape.js"></script>
+  <script type="text/javascript" src="/srcES5/shape/edShape.js"></script>
+  <script type="text/javascript" src="/srcES5/shape/folderShape.js"></script>
+  <script type="text/javascript" src="/srcES5/shape/laneShape.js"></script>
+  <script type="text/javascript" src="/srcES5/shape/folderManager.js"></script>
+  <script type="text/javascript" src="/srcES5/shape/edgeShape.js"></script>
 
   <!-- shape event -->
-  <script type="text/javascript" src="/src/shape/event/prototype/shapeEvent.js"></script>
-  <script type="text/javascript" src="/src/shape/event/activityEvent.js"></script>
-  <script type="text/javascript" src="/src/shape/event/folderEvent.js"></script>
-  <script type="text/javascript" src="/src/shape/event/edEvent.js"></script>
-  <script type="text/javascript" src="/src/shape/event/edgeEvent.js"></script>
+  <script type="text/javascript" src="/srcES5/shape/event/prototype/shapeEvent.js"></script>
+  <script type="text/javascript" src="/srcES5/shape/event/activityEvent.js"></script>
+  <script type="text/javascript" src="/srcES5/shape/event/folderEvent.js"></script>
+  <script type="text/javascript" src="/srcES5/shape/event/edEvent.js"></script>
+  <script type="text/javascript" src="/srcES5/shape/event/edgeEvent.js"></script>
 
-  <script type="text/javascript" src="/src/shape/event/folderManagerEvent.js"></script>
+  <script type="text/javascript" src="/srcES5/shape/event/folderManagerEvent.js"></script>
 
   <!-- parser -->
-  <script type="text/javascript" src="/src/util/parser.js"></script>
+  <script type="text/javascript" src="/srcES5/util/parser.js"></script>
 
   <!-- bootstrap -->
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>

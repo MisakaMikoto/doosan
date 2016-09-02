@@ -93,7 +93,7 @@ class EditorLayout extends Layout {
             } else if(laneShape.laneType == 'right') {
                 let lastMyFlowLane = this.getLastMyFLowLaneShape();
 
-                // activitiy width : 50, folderManager : 50, margin : 75
+                // activity width : 50, folderManager : 50, margin : 75
                 laneShape.width = (50 * lastChild.shape.level) + (30 * lastChild.shape.level) + (75 * lastChild.shape.level);
                 laneShape.x = lastMyFlowLane.shape.x + (lastMyFlowLane.shape.width / 2) + (laneShape.width / 2);
 
@@ -223,74 +223,199 @@ class EditorLayout extends Layout {
         return renderFolderManagerShape;
     }
 
-    renderAdd() {
-    }
-
-    renderInsert() {
-
-    }
-
+    // critical
     renderShare(sourceShape, targetShape) {
+        //let sourceFolderManager = this.getRightFolderManager(sourceShape);
+        //
+        //let sourceShapeAllElement = this.getShapeAllParent(sourceFolderManager, []);
+        //sourceShapeAllElement = this.getShapeAllChild(sourceFolderManager, sourceShapeAllElement);
+        //sourceShapeAllElement = this.createUniqueArray(sourceShapeAllElement, targetRightAllParent);
+        //sourceShapeAllElement = this.sortSharedArrayByLevel(sourceShapeAllElement);
+
         let targetFolderManager = this.getLeftFolderManager(targetShape);
+        let sourceParentElements = this.getShapeAllParent(sourceShape, []);
+        let beforeShape = targetFolderManager;
 
-        let targetRightAllParent = [];
-        targetRightAllParent.push(targetShape);
-        targetRightAllParent = this.getShapeAllParent(targetShape, targetRightAllParent);
+        let targetAllElement = this.getShapeAllParent(targetShape, []);
+        targetAllElement = this.getShapeAllChild(targetFolderManager, targetAllElement);
 
-        let sourceFolderManager = this.getRightFolderManager(sourceShape);
+        if(targetAllElement.length > 0) {
+            let sourceShapeParent = this.findSourceShapeParent(sourceShape, targetAllElement);
+            sourceParentElements = this.createUniqueArray(sourceParentElements, targetAllElement);
 
-        let sourceShapeAllElement = this.getShapeAllParent(sourceFolderManager, []);
-        sourceShapeAllElement = this.getShapeAllChild(sourceFolderManager, sourceShapeAllElement);
-        sourceShapeAllElement = this.createUniqueArray(sourceShapeAllElement, targetRightAllParent);
-        sourceShapeAllElement = this.sortSharedArray(sourceShapeAllElement);
+            beforeShape = this.canvas._RENDERER.getNextShapes(sourceShapeParent)[0];
+        }
 
-        let currentLevel = targetFolderManager.shape.level;
-        let parentShape = targetFolderManager;
+        // folder 혹은 ed 를 자식의 어떤 도형에 떨구어도 부모를 찾는 유도 로직
+        // critical
+        if (sourceParentElements.length > 0) {
+            sourceParentElements = this.changeSharedInformation(sourceParentElements, targetShape);
+            // draw parent
+            beforeShape = this.renderShareParent(beforeShape, sourceParentElements);
+        }
 
-        if (sourceShapeAllElement.length > 0) {
-            // 최상위 레벨 폴더만 parentId 변경
-            for(let i in sourceShapeAllElement) {
-                if(sourceShapeAllElement[i].shape.level == 1) {
-                    sourceShapeAllElement[i].shape.parentId = targetShape.shape.id;
-                    break;
-                }
+        // draw source
+        beforeShape = this.renderShareSource(sourceShape, beforeShape);
+
+        // 여기부터 작업 shareChidl 는 shareSource 안에서 동작하게 변경.
+        // draw child
+        this.renderShareChild(sourceShape, beforeShape, targetShape);
+    }
+
+    renderShareParent(beforeShape, sourceParentElements) {
+        // draw parent
+        for (let i in sourceParentElements) {
+            let shape  = sourceParentElements[i];
+            if(shape.shape instanceof FolderShape) {
+                let createdParentShape = this.renderFolderShape(shape.shape, beforeShape);
+                this.renderEdgeShape(beforeShape, createdParentShape);
+
+                let createdParentFolderManagerShape = this.renderFolderManagerShape(createdParentShape, 'left');
+                this.renderEdgeShape(createdParentShape, createdParentFolderManagerShape);
+
+                beforeShape = createdParentFolderManagerShape;
+                // add lane child
+                this.addChildToLane(createdParentShape);
+
+            } else if(shape.shape instanceof EDShape) {
+                // parent 가 ED 인 경우는 없을 것 이다.
+                // 예외를 위해 else if 문 미리 작성
+                ;
+
+            } else {
+                ;
             }
+        }
+        return beforeShape;
+    }
 
-            for (let i in sourceShapeAllElement) {
-                let shape = sourceShapeAllElement[i];
-                shape.shape.direction = 'left';
-                shape.shape.x = targetFolderManager.shape.x - (75 * Number(i));
+    renderShareSource(sourceShape, beforeShape) {
+        sourceShape = this.changeSharedInformation(sourceShape);
 
-                let createdShape = null;
-                if(shape.shape instanceof FolderShape) {
-                    createdShape = this.renderFolderShape(shape.shape, parentShape);
-                    this.renderEdgeShape(targetFolderManager, createdShape);
+        // draw source
+        let createdSourceShape = null;
+        if(sourceShape.shape instanceof FolderShape) {
+            createdSourceShape = this.renderFolderShape(sourceShape.shape, beforeShape);
+            this.renderEdgeShape(beforeShape, createdSourceShape);
 
+            let createdSourceFolderManagerShape = this.renderFolderManagerShape(createdSourceShape, 'left');
+            this.renderEdgeShape(createdSourceShape, createdSourceFolderManagerShape);
 
-                    let createdFolderManagerShape = this.renderFolderManagerShape(createdShape, 'left');
-                    this.renderEdgeShape(createdShape, createdFolderManagerShape);
+            beforeShape = createdSourceFolderManagerShape;
 
-                } else if(shape.shape instanceof EDShape) {
-                    createdShape = this.renderEDShape(shape.shape);
-                    //this.renderEdgeShape(beforeShape, createdShape);
+        } else if(sourceShape.shape instanceof EDShape) {
+            createdSourceShape = this.renderFolderShape(sourceShape.shape, beforeShape);
+            this.renderEdgeShape(beforeShape, createdSourceShape);
+
+        } else {
+            ;
+        }
+        // add lane child
+        this.addChildToLane(createdSourceShape);
+
+        return beforeShape;
+    }
+
+    renderShareChild(sourceShape, beforeShape, targetShape) {
+        if(sourceShape.shape.folderShapes.length > 0) {
+            sourceShape.shape.folderShapes = this.changeSharedInformation(sourceShape.shape.folderShapes, targetShape);
+
+            for(let i in sourceShape.shape.folderShapes) {
+                let childFolderShape = sourceShape.shape.folderShapes[i];
+
+                let createdChildShape = this.renderFolderShape(childFolderShape, beforeShape);
+                this.renderEdgeShape(beforeShape, createdChildShape);
+
+                let createdChildFolderManagerShape = this.renderFolderManagerShape(createdChildShape, 'left');
+                this.renderEdgeShape(createdChildShape, createdChildFolderManagerShape);
+
+                // add lane child
+                this.addChildToLane(createdChildShape);
+
+                if(childFolderShape.folderShapes.length > 0) {
+                    this.renderShareRecursive(childFolderShape, beforeShape, targetShape);
+
+                } else if(childFolderShape.edShapes.length > 0) {
+                    childFolderShape.edShapes = this.changeSharedInformation(childFolderShape.edShapes, targetShape);
+
+                    for(let i in childFolderShape.edShapes) {
+                        let childFolderEDShapes = childFolderShape.edShapes[i];
+
+                        let createdChildFolderEDShapes = this.renderEDShape(childFolderEDShapes, createdChildFolderManagerShape);
+                        this.renderEdgeShape(createdChildFolderManagerShape, createdChildFolderEDShapes);
+
+                        // add lane child
+                        this.addChildToLane(createdChildFolderEDShapes);
+                    }
 
                 } else {
                     ;
                 }
-                // add child
-                this.addChildToLane(createdShape);
+            }
+
+        } else if(sourceShape.shape.edShapes.length > 0) {
+            sourceShape.shape.edShapes = this.changeSharedInformation(sourceShape.shape.edShapes, targetShape);
+
+            for(let i in sourceShape.shape.edShapes) {
+                let childFolderEDShapes = sourceShape.shape.edShapes[i];
+
+                let createdChildFolderEDShapes = this.renderEDShape(childFolderEDShapes, beforeShape);
+                this.renderEdgeShape(beforeShape, createdChildFolderEDShapes);
+
+                // add lane child
+                this.addChildToLane(createdChildFolderEDShapes);
+            }
+
+        } else {
+            ;
+        }
+    }
+
+    renderShareRecursive(sourceShape, beforeShape, targetShape) {
+        if(sourceShape.shape.folderShapes.length > 0) {
+            sourceShape.shape.folderShapes = this.changeSharedInformation(sourceShape.shape.folderShapes, targetShape);
+
+            for (let i in sourceShape.shape.folderShapes) {
+                let childFolderShape = sourceShape.shape.folderShapes[i];
+
+                let createdChildShape = this.renderFolderShape(childFolderShape, beforeShape);
+                this.renderEdgeShape(beforeShape, createdChildShape);
+
+                let createdChildFolderManagerShape = this.renderFolderManagerShape(createdChildShape, 'left');
+                this.renderEdgeShape(createdChildShape, createdChildFolderManagerShape);
+
+                // add lane child
+                this.addChildToLane(createdChildShape);
+
+                if (childFolderShape.folderShapes.length > 0) {
+                    this.renderShareRecursive(childFolderShape, beforeShape);
+
+                } else if (childFolderShape.edShapes.length > 0) {
+                    childFolderShape.edShapes = this.changeSharedInformation(childFolderShape.edShapes, targetShape);
+
+                    for(let i in childFolderShape.edShapes) {
+                        let childFolderEDShapes = childFolderShape.edShapes[i];
+
+                        let createdChildFolderEDShapes = this.renderEDShape(childFolderEDShapes, createdChildFolderManagerShape);
+                        this.renderEdgeShape(createdChildFolderManagerShape, createdChildFolderEDShapes);
+
+                        // add lane child
+                        this.addChildToLane(createdChildFolderEDShapes);
+                    }
+                }
             }
         }
+
     }
 
     isInTarget(ui) {
         let targetShape = null;
         let myWorkFlowLaneChild = [];
 
-        $('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each(function(){
-            if(this.shape.laneType == 'left' || this.shape.laneType == 'center') {
-                if(typeof this.shape.children != 'undefined' && this.shape.children.length > 0) {
-                    myWorkFlowLaneChild = myWorkFlowLaneChild.concat(this.shape.children);
+        $('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each((index, element) => {
+            if(element.shape.laneType == 'left' || element.shape.laneType == 'center') {
+                if(typeof element.shape.children != 'undefined' && element.shape.children.length > 0) {
+                    myWorkFlowLaneChild = myWorkFlowLaneChild.concat(element.shape.children);
                 }
             }
         });
@@ -334,13 +459,32 @@ class EditorLayout extends Layout {
         for(let i in standardArray) {
             if(compareArray.length > 0) {
                 for(let j in compareArray) {
-                    if (standardArray[i].shape.id == compareArray[j].shape.id) {
-                        standardArray.splice(i, 1);
+                    if(standardArray.length > 0) {
+                        if (standardArray[i].shape.id == compareArray[j].shape.id) {
+                            standardArray.splice(i, 1);
+                        }
+
+                    } else {
+                        break;
                     }
                 }
             }
         }
         return standardArray;
+    }
+
+    findSourceShapeParent(sourceShape, targetAllElement) {
+        let sourceShapeParent = null;
+        for(let i in targetAllElement) {
+            let targetElement = targetAllElement[i];
+
+            if(targetElement.shape.id == sourceShape.shape.parentId) {
+                sourceShapeParent = targetElement;
+                break;
+            }
+
+        }
+        return sourceShapeParent;
     }
 
     getLeftFolderManager(shape) {
@@ -433,13 +577,33 @@ class EditorLayout extends Layout {
         });
     }
 
-    sortSharedArray(array) {
-        array.sort(function(a, b) {
-            if(a.shape.SHAPE_ID < b.shape.SHAPE_ID) return 1;
-            if(a.shape.SHAPE_ID > b.shape.SHAPE_ID) return -1;
+    changeSharedInformation(object, targetShape) {
+        if(object instanceof Array) {
+            // 최상위 레벨 폴더만 parentId 변경
+            // 모든 레벨에 - 를 붙여야 한다. (방향이 반대이므로)
+            for (let i in object) {
+                if(typeof object[i].shape !== 'undefined') {
+                    if (object[i].shape.level == 1) {
+                        object[i].shape.parentId = targetShape.shape.id;
+                    }
+                    object[i].shape.level = -(object[i].shape.level);
+                    object[i].shape.direction = 'left';
 
-            return 0;
-        });
-        return array;
+                } else {
+                    if (object[i].level == 1) {
+                        object[i].parentId = targetShape.id;
+                    }
+                    object[i].level = -(object[i].level);
+                    object[i].direction = 'left';
+                }
+            }
+            return object;
+
+        } else {
+            object.shape.level = -(object.shape.level);
+            object.shape.direction = 'left';
+
+            return object;
+        }
     }
 }
