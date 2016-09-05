@@ -63,7 +63,7 @@ class EditorLayout extends Layout {
     renderLaneShape(laneShape, workFlowType) {
         laneShape = this.setReplaceLaneChildren(laneShape);
         let laneShapeChildren = laneShape.children;
-        let lastChild = $('#' + laneShapeChildren.pop())[0];
+        let lastChild = $('#' + laneShapeChildren[laneShapeChildren.length - 1])[0];
 
         if(workFlowType == 'otherWorkFlow') {
             // activity lane
@@ -445,22 +445,21 @@ class EditorLayout extends Layout {
             let target = $('#' + myWorkFlowLaneChild[i]);
             let shapeOffset = target.offset();
 
-            // shape width and height 50 + plus margin area
-            let shapeTop = shapeOffset.top - 25;
-            let shapeBottom = shapeOffset.top + 50 + 25;
-            let shapeLeft = shapeOffset.left - 25;
-            let shapeRight = shapeOffset.left + 50 + 25;
-
             // 25 is shapes margin area size
+            let shapeTop = shapeOffset.top - 25;
+            let shapeBottom = shapeOffset.top + target[0].shape.height + 25;
+            let shapeLeft = shapeOffset.left - 25;
+            let shapeRight = shapeOffset.left + target[0].shape.width + 25;
+
             let draggableTop = ui.position.top;
-            let draggableBottom = ui.position.top + 50;
+            let draggableBottom = ui.position.top + target[0].shape.height;
             let draggableLeft = ui.position.left;
-            let draggableRight = ui.position.left; + 50;
+            let draggableRight = ui.position.left; + target[0].shape.width;
 
             if( ((shapeBottom >= draggableBottom) && (draggableBottom >= shapeTop))
                 && ((shapeBottom >= draggableTop) && (draggableTop >= shapeTop))
                 && ((shapeLeft <= draggableLeft) && (draggableLeft <= shapeRight))
-                && ((shapeLeft <= draggableRight) && (draggableLeft <= shapeRight)) ) {
+                && ((shapeLeft <= draggableRight) && (draggableRight <= shapeRight)) ) {
 
                 targetShape = target[0];
                 break;
@@ -570,12 +569,21 @@ class EditorLayout extends Layout {
     }
 
     addChildToLane(createdShape) {
-        $('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each(function() {
-            if(this.shape.laneType == 'center') {
-                this.shape.children.push(createdShape.id);
+        let targetLane = null;
+        $('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each((index, element) => {
+            if(element.shape.laneType == createdShape.shape.direction) {
+                targetLane = element;
                 return false;
             }
         });
+        targetLane.shape.children.push(createdShape.id);
+
+        // add folderManager
+        // critical
+        let folderManager = this.canvas._RENDERER.getNextShapes($('#' + createdShape.id));
+        if(folderManager.length > 0) {
+            targetLane.shape.children.push(folderManager[0].id);
+        }
     }
 
     changeSharedInformation(object, targetShape) {

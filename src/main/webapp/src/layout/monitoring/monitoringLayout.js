@@ -61,7 +61,7 @@ class MonitoringLayout extends Layout {
     renderLaneShape(laneShape) {
         laneShape = this.setReplaceLaneChildren(laneShape);
         let laneShapeChildren = laneShape.children;
-        let lastChild = $('#' + laneShapeChildren.pop())[0];
+        let lastChild = $('#' + laneShapeChildren[laneShapeChildren.length - 1])[0];
 
         if(laneShape.laneType == 'center') {
             laneShape.width = lastChild.shape.width + 75 + 25;

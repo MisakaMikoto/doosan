@@ -341,6 +341,20 @@ class Layout {
         return standardLaneShape;
     }
 
+    getShapeLeftAllChildren(shape, children) {
+        let nextShapes = this.canvas._RENDERER.getNextShapes(shape);
+        if(nextShapes.length > 0) {
+            for(let i in nextShapes) {
+                if( (nextShapes[i].shape instanceof FolderShape || nextShapes[i].shape instanceof EDShape)
+                    && (nextShapes[i].shape.direction == 'left') ) {
+                    children.push(nextShapes[i]);
+                }
+                this.getShapeLeftAllChildren(nextShapes[i], children);
+            }
+        }
+        return children;
+    }
+
     getShapeRightAllChildren(shape, children) {
         let nextShapes = this.canvas._RENDERER.getNextShapes(shape);
         if(nextShapes.length > 0) {
@@ -362,6 +376,13 @@ class Layout {
             $('[_shape="IMAGE"]').each((index, element) => {
                 if(element.shape.id == children[i]) {
                     replaceChildren.push(element.id);
+
+                    // add folderManager
+                    // critical
+                    let folderManager = this.canvas._RENDERER.getNextShapes($('#' + element.id));
+                    if(folderManager.length > 0) {
+                        replaceChildren.push(folderManager[0].id);
+                    }
                 }
             });
         }
@@ -369,30 +390,47 @@ class Layout {
         return laneShape;
     }
 
-    replace(targetShape, direction, moveLevel) {
-        let offset = [];
-        let x = 0;
-        if(direction == 'right') {
-            x += 75 * moveLevel;
-        } else {
-            x -= 75 * moveLevel;
-        }
-        let y = 0;
+    // critical method
+    replace(targetShape, targetLane) {
+        // replace function operate not root folderManager
+        if(!(this.canvas._RENDERER.getPrevShapes(targetShape)[0].shape instanceof ActivityShape)) {
+            let changeIndex = 0;
+            let children = null;
 
-        offset.push(x);
-        offset.push(y);
+            if(targetShape.shape.direction == 'left') {
+                children = this.getShapeLeftAllChildren(targetShape, []);
 
-        this.autoIncreaseCanvasSize(targetShape.shape);
-        this.autoIncreaseLaneSize(targetShape.shape);
+            } else {
+                children = this.getShapeRightAllChildren(targetShape, []);
+            }
 
-        this.canvas._RENDERER.move(targetShape, offset);
-        this.replaceEdge();
-    }
+            let lastPositionChild = children[children.length - 1];
 
-    replaceEdge() {
-        let allEdges = this.canvas._RENDERER.getAllEdges();
-        for(let i in allEdges) {
-            this.canvas._RENDERER.reconnect(allEdges[i]);
+            for(let i in targetLane.shape.children) {
+                let offset = [];
+                let x = 0;
+                let y = 0;
+
+                let child = $('#' + targetLane.shape.children[i])[0];
+                if(targetShape.shape.type == 'close') {
+                    changeIndex = lastPositionChild.shape.index - targetShape.shape.index;
+
+                    if (child.shape.index > lastPositionChild.shape.index) {
+                        y -= 90 * changeIndex;
+                    }
+
+                } else {
+                    changeIndex = lastPositionChild.shape.index;
+
+                    if (children.length > 1 && targetShape.shape.index < child.shape.index && changeIndex < child.shape.index) {
+                        y += 90 * changeIndex;
+                    }
+                }
+
+                offset.push(x);
+                offset.push(y);
+                this.canvas._RENDERER.move(child, offset);
+            }
         }
     }
 }

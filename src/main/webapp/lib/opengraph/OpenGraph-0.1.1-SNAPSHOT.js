@@ -17970,6 +17970,10 @@ OG.renderer.RaphaelRenderer.prototype.connect = function (fromTerminal, toTermin
             return element;
         };
 
+    // edge 의 style 도 검색하여 존재한다면 style 에 set
+    if(edge.shape.geom.style instanceof OG.geometry.Style) {
+        style = edge.shape.geom.style;
+    }
     OG.Util.apply(_style, (style instanceof OG.geometry.Style) ? style.map : style || {}, me._CONFIG.DEFAULT_STYLE.EDGE);
 
 
