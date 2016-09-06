@@ -3,7 +3,7 @@
  */
 class EDShape extends ImageShape {
     constructor(name) {
-        super('/resources/ed.svg', name);
+        super('./resources/ed.svg', name);
         this.SHAPE_ID = 'OG.shape.doosan.ed';
     }
 }

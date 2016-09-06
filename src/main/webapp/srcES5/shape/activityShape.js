@@ -17,7 +17,7 @@ var ActivityShape = function (_ImageShape) {
     function ActivityShape(name) {
         _classCallCheck(this, ActivityShape);
 
-        var _this = _possibleConstructorReturn(this, (ActivityShape.__proto__ || Object.getPrototypeOf(ActivityShape)).call(this, '/resources/activity.svg', name));
+        var _this = _possibleConstructorReturn(this, (ActivityShape.__proto__ || Object.getPrototypeOf(ActivityShape)).call(this, './resources/activity.svg', name));
 
         _this.SHAPE_ID = 'OG.shape.doosan.activity';
 

@@ -17,7 +17,7 @@ var FolderManager = function (_ImageShape) {
     function FolderManager(name) {
         _classCallCheck(this, FolderManager);
 
-        var _this = _possibleConstructorReturn(this, (FolderManager.__proto__ || Object.getPrototypeOf(FolderManager)).call(this, '/resources/collapse.svg', name));
+        var _this = _possibleConstructorReturn(this, (FolderManager.__proto__ || Object.getPrototypeOf(FolderManager)).call(this, './resources/collapse.svg', name));
 
         _this.SHAPE_ID = 'OG.shape.doosan.folderManager';
 

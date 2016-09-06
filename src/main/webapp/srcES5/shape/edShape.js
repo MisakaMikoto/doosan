@@ -15,7 +15,7 @@ var EDShape = function (_ImageShape) {
     function EDShape(name) {
         _classCallCheck(this, EDShape);
 
-        var _this = _possibleConstructorReturn(this, (EDShape.__proto__ || Object.getPrototypeOf(EDShape)).call(this, '/resources/ed.svg', name));
+        var _this = _possibleConstructorReturn(this, (EDShape.__proto__ || Object.getPrototypeOf(EDShape)).call(this, './resources/ed.svg', name));
 
         _this.SHAPE_ID = 'OG.shape.doosan.ed';
         return _this;

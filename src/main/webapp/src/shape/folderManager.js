@@ -3,7 +3,7 @@
  */
 class FolderManager extends ImageShape {
     constructor(name) {
-        super('/resources/collapse.svg', name);
+        super('./resources/collapse.svg', name);
         this.SHAPE_ID = 'OG.shape.doosan.folderManager';
 
         this._type = '';

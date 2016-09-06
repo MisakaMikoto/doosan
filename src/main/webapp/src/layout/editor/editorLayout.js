@@ -63,7 +63,7 @@ class EditorLayout extends Layout {
     renderLaneShape(laneShape, workFlowType) {
         laneShape = this.setReplaceLaneChildren(laneShape);
         let laneShapeChildren = laneShape.children;
-        let lastChild = $('#' + laneShapeChildren[laneShapeChildren.length - 1])[0];
+        let lastChild = (laneShape.laneType == 'center') ? $('#' + laneShapeChildren[0])[0] : $('#' + laneShapeChildren[laneShapeChildren.length - 1])[0];
 
         if(workFlowType == 'otherWorkFlow') {
             // activity lane
@@ -469,7 +469,7 @@ class EditorLayout extends Layout {
     }
 
     createShapeSpan(ui, src) {
-        let pngSrc = src.split('.')[0] + '.png';
+        let pngSrc = src.split('svg')[0] + 'png';
         $('#draggable').css('display', 'block');
         $('#draggable').css('background-image', 'url(' + pngSrc +')');
         $('#draggable').offset({top: ui.position.top, left: ui.position.left});

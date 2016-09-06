@@ -17,7 +17,7 @@ var FolderShape = function (_ImageShape) {
     function FolderShape(name) {
         _classCallCheck(this, FolderShape);
 
-        var _this = _possibleConstructorReturn(this, (FolderShape.__proto__ || Object.getPrototypeOf(FolderShape)).call(this, '/resources/folder.svg', name));
+        var _this = _possibleConstructorReturn(this, (FolderShape.__proto__ || Object.getPrototypeOf(FolderShape)).call(this, './resources/folder.svg', name));
 
         _this.SHAPE_ID = 'OG.shape.doosan.folder';
 

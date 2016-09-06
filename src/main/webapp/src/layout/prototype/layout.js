@@ -323,7 +323,7 @@ class Layout {
     getCenterMyFLowLaneShape() {
         let centerMyFlowLane = null;
         $('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each((index, element) => {
-            if(this.shape.laneType == 'center') {
+            if(element.shape.laneType == 'center') {
                 centerMyFlowLane = element;
                 return false;
             }

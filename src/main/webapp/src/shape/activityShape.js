@@ -3,7 +3,7 @@
  */
 class ActivityShape extends ImageShape {
     constructor(name) {
-        super('/resources/activity.svg', name);
+        super('./resources/activity.svg', name);
         this.SHAPE_ID = 'OG.shape.doosan.activity';
 
         this._leftFolderShapes = [];
