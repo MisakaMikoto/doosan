@@ -55,75 +55,73 @@
         <script type="text/javascript" src="./src/aras/prototype/aras.js"></script>
         <script type="text/javascript" src="./src/aras/select/select.js"></script>
         
+        <!--  rest -->
+        <script type="text/javascript" src="./src/rest/prototype/rest.js"></script>
+        <script type="text/javascript" src="./src/rest/selectBox/selectBoxRest.js"></script>
+        
+        
         <style type="text/css">
         </style>
 
         <script type="text/javascript">
             $(document).ready(function() {
+            	// create load aras data
             	let select = new Select();
-            	select.selectMethodName = 'DHI_WF_EDITOR_STRUCTURE';
+            	let result = select.load('DHI_WF_EDITOR_STRUCTURE');
             	
-            	let body = "<wf_id>75324F5DC04C48B3ACDC354709997708</wf_id>";
-                body += "<std_yn>Y</std_yn>";
-                body += "<inout>OUT</inout>";
+            	// load rest selectbox
+            	let selectBoxRest = new SelectBoxRest();
+            	selectBoxRest.load();
+            	selectBoxRest.bindEvent();
             	
-            	select.body = body;       
-            	let result = select.runApplyMethod();
-            	console.log(result);
-            	
-                // create test data
-                let otherWorkFlowData = Parser.createOtherWorkFlowData();
-                let myWorkFlowData = Parser.createMyWorkFlowData(otherWorkFlowData);
-
+            	// load editor
                 let editorLayout = new EditorLayout();
                 editorLayout.type = editorLayout;
                 editorLayout.createCanvas('canvas');
-                editorLayout.otherWorkFlowData = otherWorkFlowData;
-                editorLayout.myWorkFlowData = myWorkFlowData;
-                editorLayout.drawOtherWorkFlow();
-                editorLayout.drawMyWorkFlow();
+                
+				if(result.nodeList != null) {
+					// create test data
+	                let parser = new Parser();
+	                let otherWorkFlowData = parser.createOtherWorkFlowData(result.nodeList);
+	                let myWorkFlowData = parser.createMyWorkFlowData(otherWorkFlowData);
+	                
+	                editorLayout.otherWorkFlowData = otherWorkFlowData;
+	                editorLayout.myWorkFlowData = myWorkFlowData;
+	                editorLayout.drawOtherWorkFlow();
+	                editorLayout.drawMyWorkFlow();
+            	}
             });
         </script>
     </head>
     <body>
         <div align="center" id="container" style="width: 100%; height: 100%;">
-            <div id="top" align="center"; style="width: 100%; height: 52%;">
+            <div id="top" align="center" style="width: 100%; height: 52%;">
                 <div id="otherWorkFlow" style="float: left; width: 50%">
                     <table class="table">
                         <tbody>
                             <tr>
                                 <td> Discipline
-                                    <select class="form-control input-sm">
-                                        <option> -- select -- </option>
-                                        <option> Civil </option>
-                                        <option> Electrical </option>
-                                        <option> I&C </option>
+                                    <select id="discipline" class="form-control input-sm">
+                                        <option value=""> -- select -- </option>
                                     </select>
                                 </td>
 
                                 <td> Discipline Spec
-                                    <select class="form-control input-sm">
-                                        <option> -- select -- </option>
-                                        <option> Boiler Area </option>
-                                        <option> BOP Area </option>
-                                        <option> Equipment </option>
+                                    <select id="disciplineSpec" class="form-control input-sm">
+                                        <option value=""> -- select -- </option>
                                     </select>
                                 </td>
 
                                 <td> BG
-                                    <select class="form-control input-sm">
-                                        <option> -- select -- </option>
-                                        <option> EPC BG </option>
-                                        <option> 터빈/발전기 BG </option>
-                                        <option> 보일러 BG </option>
-                                        <option> Water BG </option>
+                                    <select id="bg" class="form-control input-sm">
+                                        <option value=""> -- select -- </option>
                                     </select>
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="3" style="border-top: 0px;"> Other Workflow
-                                    <select class="form-control input-sm">
-                                        <option> Y05A4U-S-SY-0012-00 Compressed air system [Process] [System] [EPC BG] </option>
+                                <td id="otherWorkflowTd" colspan="3" style="border-top: 0px;"> Other Workflow
+                                    <select id="otherWorkflow" class="form-control input-sm">
+                                        <option value=""> -- select -- </option>
                                     </select>
                                 </td>
                             </tr>

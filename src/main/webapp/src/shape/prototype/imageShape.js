@@ -26,7 +26,12 @@ class ImageShape extends OG.shape.ImageShape {
         this._level = '';
         this._index = '';
 
+        this._id = '';
+        this._fId = '';
+        
         this._parentId = '';
+        this._fsParentId = '';
+        
         this._direction = '';
         this._workFlowType = '';
     }
@@ -87,12 +92,36 @@ class ImageShape extends OG.shape.ImageShape {
         return Number(this._index);
     }
 
+    set id(id) {
+    	this._id = id;
+    }
+    
+    get id() {
+    	return this._id;
+    }
+    
+    set fId(fId) {
+    	this._fId = fId;
+    }
+    
+    get fId() {
+    	return this._fId;
+    }
+    
     set parentId(parentId) {
         this._parentId = parentId;
     }
 
     get parentId() {
         return this._parentId;
+    }
+    
+    set fsParentId(fsParentId) {
+    	this._fsParentId = fsParentId;
+    }
+    
+    get fsParentId() {
+    	return this._fsParentId;
     }
 
     set direction(direction) {

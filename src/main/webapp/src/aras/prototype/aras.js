@@ -1,3 +1,6 @@
+/**
+ * Created by MisakaMikoto on 2016. 9. 6..
+ */
 class Aras {
 	constructor() {
 		 this._arasObject = (window.opener != null) ? window.opener.aras : '';

@@ -86,7 +86,7 @@ class Layout {
             for(let i in activityShapes) {
                 let activityShape = activityShapes[i];
                 activityShape.level = 0;
-                activityShape.index = beforeLastIndex;
+                activityShape.index = beforeLastIndex + Number(i);
                 activityShape.workFlowType = workFlowType;
 
                 let createdActivityShape = this.type.renderActivityShape(activityShape);
@@ -105,9 +105,9 @@ class Layout {
                 // find folders
                 let leftFolderShapes = activityShape.leftFolderShapes;
                 if(typeof leftFolderShapes != 'undefined' && leftFolderShapes.length > 0) {
-                    for(let i in leftFolderShapes) {
-                        if (activityShape.id == leftFolderShapes[i].parentId) {
-                            let folderShape = leftFolderShapes[i];
+                    for(let j in leftFolderShapes) {
+                        if (activityShape.id == leftFolderShapes[j].parentId) {
+                            let folderShape = leftFolderShapes[j];
                             folderShape.parentId = activityShape.id;
                             folderShape.level = activityShape.level - 1;
                             folderShape.index = beforeLastIndex + activityShape.index;
@@ -126,14 +126,14 @@ class Layout {
                             }
 
                             // find eds
-                            let edShapes = leftFolderShapes[i].edShapes;
+                            let edShapes = leftFolderShapes[j].edShapes;
                             if(typeof edShapes != 'undefined' && edShapes.length > 0) {
-                                for(let i in edShapes) {
-                                    if(folderShape.id == edShapes[i].parentId) {
-                                        let edShape = edShapes[i];
+                                for(let k in edShapes) {
+                                    if(folderShape.id == edShapes[k].parentId) {
+                                        let edShape = edShapes[k];
                                         edShape.parentId = folderShape.id;
                                         edShape.level = folderShape.level - 1;
-                                        edShape.index = folderShape.index + Number(i);
+                                        edShape.index = folderShape.index + Number(k);
                                         edShape.workFlowType = workFlowType;
 
                                         let createdEDShape = this.type.renderEDShape(edShape, createdFolderCollapseShape);
@@ -152,9 +152,9 @@ class Layout {
                 // find folders
                 let rightFolderShapes = activityShape.rightFolderShapes;
                 if(typeof rightFolderShapes != 'undefined' && rightFolderShapes.length > 0) {
-                    for(let i in rightFolderShapes) {
-                        if (activityShape.id == rightFolderShapes[i].parentId) {
-                            let folderShape = rightFolderShapes[i];
+                    for(let j in rightFolderShapes) {
+                        if (activityShape.id == rightFolderShapes[j].parentId) {
+                            let folderShape = rightFolderShapes[j];
                             folderShape.parentId = activityShape.id;
                             folderShape.level = activityShape.level + 1;
                             folderShape.index = beforeLastIndex + activityShape.index;
@@ -173,14 +173,14 @@ class Layout {
                             }
 
                             // find eds
-                            let edShapes = rightFolderShapes[i].edShapes;
+                            let edShapes = rightFolderShapes[j].edShapes;
                             if(typeof edShapes != 'undefined' && edShapes.length > 0) {
-                                for(let i in edShapes) {
-                                    if(folderShape.id == edShapes[i].parentId) {
-                                        let edShape = edShapes[i];
+                                for(let k in edShapes) {
+                                    if(folderShape.id == edShapes[k].parentId) {
+                                        let edShape = edShapes[k];
                                         edShape.parentId = folderShape.id;
                                         edShape.level = folderShape.level + 1;
-                                        edShape.index = folderShape.index + Number(i);
+                                        edShape.index = folderShape.index + Number(k);
                                         edShape.workFlowType = workFlowType;
 
                                         let createdEDShape = this.type.renderEDShape(edShape, createdFolderCollapseShape);
@@ -233,8 +233,7 @@ class Layout {
 
                     let childFolderShapes = folderShape.folderShapes;
                     if(typeof childFolderShapes != 'undefined' && childFolderShapes.length > 0) {
-                        recursiveFolder(childFolderShapes, createdFolderShape, direction);
-
+                        this.recursiveFolder(childFolderShapes, createdFolderShape, direction);
                     }
                     // save last index and level
                     beforeLastIndex = folderShape.index;
@@ -242,9 +241,9 @@ class Layout {
                     // find eds
                     let edShapes = folderShapes[i].edShapes;
                     if(typeof edShapes != 'undefined' && edShapes.length > 0) {
-                        for(let i in edShapes) {
-                            if(folderShape.id == edShapes[i].parentId) {
-                                let edShape = edShapes[i];
+                        for(let j in edShapes) {
+                            if(folderShape.id == edShapes[j].parentId) {
+                                let edShape = edShapes[j];
                                 edShape.parentId = folderShape.id;
 
                                 if(direction == 'left') {
@@ -253,7 +252,7 @@ class Layout {
                                 } else {
                                     edShape.level = folderShape.level + 1;
                                 }
-                                edShape.index = folderShape.index + Number(i);
+                                edShape.index = folderShape.index + Number(j);
                                 edShape.workFlowType = workFlowType;
 
                                 let createdEDShape = this.type.renderEDShape(edShape, createdFolderCollapseShape);
