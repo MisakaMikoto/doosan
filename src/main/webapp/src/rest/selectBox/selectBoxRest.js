@@ -6,9 +6,9 @@ class SelectBoxRest extends Rest {
 		super();
 		
 		this._wfId = (typeof opener != 'undefined') ? opener.parent.top.thisItem.getID() : '';
-		this._stdYN = (typeof opener != 'undefined') ? opener.parent.top.thisItem.getType() == 'DHI_WF_WF' ? 'Y' : 'N' : '';
+		this._stdYN = (typeof opener != 'undefined') ? opener.parent.top.thisItem.getType() == 'DHI_WF_WFT' ? 'Y' : 'N' : '';
 		this._projectId = "49BEBF8A1CDA4B96BF0A0C31EBB4B449";
-		this._initSelectBox = '<select id="otherWorkflow" class="form-control input-sm"><option value=""> -- select -- </option></select>';
+		this._canvas = '';
 	}
 	
 	set wfId(wfId) {
@@ -35,12 +35,12 @@ class SelectBoxRest extends Rest {
 		return this._projectId;
 	}
 	
-	set initSelectBox(initSelectBox) {
-		this._initSelectBox = initSelectBox;
+	set canvas(canvas) {
+		this._canvas = canvas;
 	}
 	
-	get initSelectBox() {
-		return this._initSelectBox;
+	get canvas() {
+		return this._canvas;
 	}
 	
 	bindEvent() {
@@ -56,26 +56,32 @@ class SelectBoxRest extends Rest {
 			this.reload();
 	    });
 		
-		$('#otherWorkflow').change(() => {
+		$('#targetOtherWorkflow').change(() => {
+			let wfId = $('#targetOtherWorkflow').val();
+			// init
+			this.emptyOtherWorkFlow();
+			
 			// create load aras data
         	let select = new Select();
-        	let result = select.load('DHI_WF_EDITOR_STRUCTURE');
+        	let outResult = select.reload('DHI_WF_EDITOR_STRUCTURE', wfId, this.stdYN);
         	
         	// load editor
             let editorLayout = new EditorLayout();
             editorLayout.type = editorLayout;
+            editorLayout.canvas = this.canvas;
             
-			if(result.nodeList != null) {
-				// create test data
-                let parser = new Parser();
-                let otherWorkFlowData = parser.createOtherWorkFlowData(result.nodeList);
-                let myWorkFlowData = parser.createMyWorkFlowData(otherWorkFlowData);
-                
-                editorLayout.otherWorkFlowData = otherWorkFlowData;
-                editorLayout.myWorkFlowData = myWorkFlowData;
-                editorLayout.drawOtherWorkFlow();
-                editorLayout.drawMyWorkFlow();
-        	}
+			// create test data
+            let parser = new Parser();
+            let otherWorkFlowData = parser.createOtherWorkFlowData(outResult.nodeList);
+            
+            editorLayout.otherWorkFlowData = otherWorkFlowData;
+            editorLayout.drawOtherWorkFlow();
+            //editorLayout.sendLaneToBack();
+            
+            $('[_shape_id="OG.shape.doosan.otherWorkFlowLane"]').each((index, element) => {
+                $(element).attr('_selected', 'true');
+            });
+            this.canvas._HANDLER.sendToBack();
 		});
 	}
 	
@@ -90,7 +96,7 @@ class SelectBoxRest extends Rest {
 	}
 	
 	reload() {
-		let pDatainitCB = "{kind: '', discLine: '" + $("#discipline")[0].value + "', discSpec: '" + $("#disciplineSpec")[0].value + "', bg: '" + $("#bg")[0].value
+		let pDatainitCB = "{kind: '', discLine: '" + $("#discipline").val() + "', discSpec: '" + $("#disciplineSpec").val() + "', bg: '" + $("#bg").val()
 								+ "', wf_id: '" + this.wfId + "', stdYN: '" + this.stdYN + "', project_id: '" + this.projectId + "', REL_WF_ID: ''}";
 		
 		this.type = 'POST';
@@ -125,18 +131,22 @@ class SelectBoxRest extends Rest {
 	renderOtherWorkFlowBox(response) {
 		let json = jQuery.parseJSON(response.d);
 		if(json.rtn) {
-			this.emptySelectBoxElement();
 			let otherWorkFlows = jQuery.parseJSON(json.data);
 			
 			for(let i in otherWorkFlows.data) {
-				this.appendSelectBoxElement($('#otherWorkflow'), otherWorkFlows.data[i].LABEL, otherWorkFlows.data[i].VALUE);
+				this.appendSelectBoxElement($('#targetOtherWorkflow'), otherWorkFlows.data[i].LABEL, otherWorkFlows.data[i].VALUE);
 			}
 		}
 	}
 	
-	emptySelectBoxElement() {
-		$('#otherWorkflow').remove();
-		$('#otherWorkflowTd').append(this.initSelectBox);
+	emptyOtherWorkFlow() {
+		$('[_shape_id="OG.shape.doosan.otherWorkFlowLane"]').each((index, element)=> {
+			let laneChildren = element.shape.children;
+			for(let i in laneChildren) {
+				$('#' + i).remove();
+			}
+			$(element).remove();
+		});
 	}
 	
 	appendSelectBoxElement(element, label, value) {

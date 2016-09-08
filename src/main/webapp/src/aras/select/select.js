@@ -15,15 +15,15 @@ class Select extends Aras {
 		return this._selectMethodName;
 	}
 	
-	load(selectMethodName) {
+	load(selectMethodName, inout) {
 		this.selectMethodName = selectMethodName;
 		
 		let wfId = (typeof opener != 'undefined') ? opener.parent.top.thisItem.getID() : '';
-		let stdYN = (typeof opener != 'undefined') ? opener.parent.top.thisItem.getType() == 'DHI_WF_WF' ? 'Y' : 'N' : '';
+		let stdYN = (typeof opener != 'undefined') ? opener.parent.top.thisItem.getType() == 'DHI_WF_WFT' ? 'Y' : 'N' : '';
 		
 		let body = '<wf_id>' + wfId + '</wf_id>';
         body += '<std_yn>' + stdYN + '</std_yn>';
-        body += '<inout>OUT</inout>';
+        body += '<inout>' + inout + '</inout>';
         
         this.body = body;
 		

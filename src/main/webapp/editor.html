@@ -67,29 +67,30 @@
             $(document).ready(function() {
             	// create load aras data
             	let select = new Select();
-            	let result = select.load('DHI_WF_EDITOR_STRUCTURE');
-            	
-            	// load rest selectbox
-            	let selectBoxRest = new SelectBoxRest();
-            	selectBoxRest.load();
-            	selectBoxRest.bindEvent();
+            	let inResult = select.load('DHI_WF_EDITOR_STRUCTURE', 'IN');
+            	let outResult = select.load('DHI_WF_EDITOR_STRUCTURE', 'OUT');
             	
             	// load editor
                 let editorLayout = new EditorLayout();
                 editorLayout.type = editorLayout;
                 editorLayout.createCanvas('canvas');
+            	
+            	// load rest selectbox
+            	let selectBoxRest = new SelectBoxRest();
+            	selectBoxRest.canvas = editorLayout.canvas;
+            	selectBoxRest.load();
+            	selectBoxRest.bindEvent();
+            	
+				// create test data
+                let parser = new Parser();
+                let myWorkFlowData = parser.createMyWorkFlowData(inResult.nodeList, outResult.nodeList);
+                let otherWorkFlowData = parser.createOtherWorkFlowData();
                 
-				if(result.nodeList != null) {
-					// create test data
-	                let parser = new Parser();
-	                let otherWorkFlowData = parser.createOtherWorkFlowData(result.nodeList);
-	                let myWorkFlowData = parser.createMyWorkFlowData(otherWorkFlowData);
-	                
-	                editorLayout.otherWorkFlowData = otherWorkFlowData;
-	                editorLayout.myWorkFlowData = myWorkFlowData;
-	                editorLayout.drawOtherWorkFlow();
-	                editorLayout.drawMyWorkFlow();
-            	}
+                editorLayout.myWorkFlowData = myWorkFlowData;
+                editorLayout.drawMyWorkFlow();
+                
+                editorLayout.otherWorkFlowData = otherWorkFlowData;
+                editorLayout.drawOtherWorkFlow();
             });
         </script>
     </head>
@@ -120,7 +121,7 @@
                             </tr>
                             <tr>
                                 <td id="otherWorkflowTd" colspan="3" style="border-top: 0px;"> Other Workflow
-                                    <select id="otherWorkflow" class="form-control input-sm">
+                                    <select id="targetOtherWorkflow" class="form-control input-sm">
                                         <option value=""> -- select -- </option>
                                     </select>
                                 </td>

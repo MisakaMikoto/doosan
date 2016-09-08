@@ -36,15 +36,18 @@ class EditorLayout extends Layout {
     renderActivityShape(activityShape) {
         activityShape.width = 50;
         activityShape.height = 50;
+        
+        let otherWorkFlowCenterWidth = 50 + 75 + 20;
+    	let otherWorkFlowRightWidth = (50 + 75 + 20) * 6;
+    	let myWorkFlowLeftWidth = (50 + 75 + 20) * 6;
+    	let myWorkFlowCenterWidth = 50 + 75 + 20;
+    	let myWorkFlowRightWidth = (50 + 75 + 20) * 6;
 
-        if(activityShape.workFlowType == 'otherWorkFlow') {
-            activityShape.x = 50 + 15;
-
+        if(activityShape.workFlowType == 'myWorkFlow') {
+    		activityShape.x = (otherWorkFlowCenterWidth + otherWorkFlowRightWidth + myWorkFlowLeftWidth) + (myWorkFlowCenterWidth / 2);
+        	
         } else {
-            let firstOtherFlowLane = this.getFirstOtherFLowLaneShape();
-            let lastOtherFlowLane = this.getLastOtherFLowLaneShape();
-            activityShape.x = firstOtherFlowLane.shape.x + lastOtherFlowLane.shape.width + (lastOtherFlowLane.shape.x + (lastOtherFlowLane.shape.width / 2));
-
+        	activityShape.x = otherWorkFlowCenterWidth / 2;
         }
         activityShape.y = 90 * (activityShape.index + 1);
 
@@ -61,72 +64,90 @@ class EditorLayout extends Layout {
     }
 
     renderLaneShape(laneShape, workFlowType) {
+    	let laneActivityChildrenLength = laneShape.children.length;
         laneShape = this.setReplaceLaneChildren(laneShape);
         let laneShapeChildren = laneShape.children;
-        let lastChild = (laneShape.laneType == 'center') ? $('#' + laneShapeChildren[0])[0] : $('#' + laneShapeChildren[laneShapeChildren.length - 1])[0];
 
-        if(workFlowType == 'otherWorkFlow') {
-            // activity lane
+        let otherWorkFlowCenterWidth = 50 + 75 + 20;
+    	let otherWorkFlowRightWidth = (50 + 75 + 20) * 6;
+    	let myWorkFlowLeftWidth = (50 + 75 + 20) * 6;
+    	let myWorkFlowCenterWidth = 50 + 75 + 20;
+    	let myWorkFlowRightWidth = (50 + 75 + 20) * 6;
+    	
+        if(workFlowType == 'myWorkFlow') {
             if(laneShape.laneType == 'center') {
-                // activityShape width + margin + folderManager width - 5
-                laneShape.width = 50 + 75 + 15 - 2;
-                laneShape.x = (laneShape.width / 2) + 2;
+                laneShape.width = myWorkFlowCenterWidth;
+                laneShape.x = (otherWorkFlowCenterWidth + otherWorkFlowRightWidth + myWorkFlowLeftWidth) + (laneShape.width / 2);
 
             } else if(laneShape.laneType == 'right') {
+                // activity width : 50, folderManager : 50, margin : 75
+                laneShape.width = myWorkFlowRightWidth;
+                laneShape.x =  (otherWorkFlowCenterWidth + otherWorkFlowRightWidth + myWorkFlowLeftWidth + myWorkFlowCenterWidth) + (laneShape.width / 2);
 
-                let lastOtherFlowLane = this.getLastOtherFLowLaneShape();
-                // activity width : 50, folderManager : 20, margin : 75
-                laneShape.width = (50 * lastChild.shape.level) + (20 * lastChild.shape.level) + (75 * lastChild.shape.level);
-                laneShape.x = lastOtherFlowLane.shape.x + (lastOtherFlowLane.shape.width / 2) + (laneShape.width / 2);
+            } else {
+                laneShape.width = myWorkFlowLeftWidth;
+                laneShape.x = (otherWorkFlowCenterWidth + otherWorkFlowRightWidth) + (laneShape.width / 2);
+            }
+            
+            if(laneShapeChildren.length > 0) {
+            	laneShape.height = ((laneActivityChildrenLength + 1) * 90) - 2;
+            	
+            } else {
+            	let laneShapeHeight = null;
+            	$('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each((index, element) => {
+            		if(element.shape.laneType == 'center') {
+            			laneShapeHeight = element.shape.height;
+            			return false;
+            		}
+            	});
+            	if(laneShapeHeight != null) {
+            		laneShape.height = laneShapeHeight;
+            	}
+            }
+            laneShape.y = (laneShape.height / 2) + 2;
+            
+        } else if(workFlowType == 'otherWorkFlow') {
+            if(laneShape.laneType == 'center') {
+                laneShape.width = otherWorkFlowCenterWidth;
+                laneShape.x = laneShape.width / 2;
+
+            } else if(laneShape.laneType == 'right') {
+                laneShape.width = otherWorkFlowRightWidth;
+                laneShape.x = otherWorkFlowCenterWidth + (laneShape.width / 2);
 
             } else {
                 ;
             }
-
-        } else if(workFlowType == 'myWorkFlow') {
-            if(laneShape.laneType == 'center') {
-                let firstOtherFlowLane = this.getFirstOtherFLowLaneShape();
-                let firstMyFlowLane = this.getFirstMyFLowLaneShape();
-                laneShape.width = firstOtherFlowLane.shape.width;
-                laneShape.x = firstMyFlowLane.shape.x + (firstMyFlowLane.shape.width / 2) + (laneShape.width / 2);
-
-            } else if(laneShape.laneType == 'right') {
-                let lastMyFlowLane = this.getLastMyFLowLaneShape();
-
-                // activity width : 50, folderManager : 50, margin : 75
-                laneShape.width = (50 * lastChild.shape.level) + (30 * lastChild.shape.level) + (75 * lastChild.shape.level);
-                laneShape.x = lastMyFlowLane.shape.x + (lastMyFlowLane.shape.width / 2) + (laneShape.width / 2);
-
-            } else {
-                let lastOtherFlowLane = this.getLastOtherFLowLaneShape();
-                laneShape.width = lastOtherFlowLane.shape.width;
-                laneShape.x = lastOtherFlowLane.shape.x + (lastOtherFlowLane.shape.width / 2) + (laneShape.width / 2);
-            }
+            
+            let myWorkFlowlaneShapeHeight = null;
+        	$('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each((index, element) => {
+        		if(element.shape.laneType == 'center') {
+        			myWorkFlowlaneShapeHeight = element.shape.height;
+        			return false;
+        		}
+        	});
+        	
+        	if(myWorkFlowlaneShapeHeight < (laneShapeChildren.length * 90) - 2) {
+        		laneShape.height = (laneShapeChildren.length * 90) - 2;
+        		
+        		$('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each((index, element) => {
+        			element.shape.height = laneShape.height;
+            	});
+        		
+        	} else {
+        		laneShape.height = myWorkFlowlaneShapeHeight;
+        	}
+        	laneShape.y = (laneShape.height / 2) + 2;
 
         } else {
             ;
-        }
-
-        if(lastChild != null) {
-            if ((90 * lastChild.shape.level) < 600) {
-                laneShape.height = $('svg').height() - 2;
-                laneShape.y = (laneShape.height / 2) + 2;
-
-            } else {
-                laneShape.height = (90 * lastChild.level) - 2;
-                laneShape.y = (90 * lastChild.level) + 2;
-            }
-
-        } else {
-            let lastOtherFlowLane = this.getLastOtherFLowLaneShape();
-            laneShape.height = lastOtherFlowLane.shape.height;
-            laneShape.y = lastOtherFlowLane.shape.y;
         }
 
         let shapeRenderer = new ShapeRenderer();
         shapeRenderer.canvas = this.canvas;
         shapeRenderer.shape = laneShape;
         shapeRenderer.option = {stroke: 'black'};
+        
         return shapeRenderer.render();
     }
 

@@ -13,25 +13,7 @@ class Parser {
         return JSON.stringify(jsonObject);
     }
 
-    createOtherWorkFlowData(resultNodeList) {
-    	let data = new Object();
-		data.activityShapes = [];
-		data.laneShapes = [];
-		data.workFlowType = 'otherWorkFlow';
-		
-		// createLane
-		let centerLane = new LaneShape('otherWorkFlowLane');
-		centerLane.id = 'otherWorkFlowLane';
-		centerLane.name = 'otherWorkFlowLane';
-		centerLane.children = [];
-		centerLane.laneType = 'center';
-
-        let rightLane = new LaneShape('otherWorkFlowLane');
-        rightLane.id = 'otherWorkFlowLane';
-        rightLane.name = 'otherWorkFlowLane';
-        rightLane.children = [];
-        rightLane.laneType = 'right';
-		
+    createWorkFlowData(data, resultNodeList, inout) {
     	for(let i = 0; i < resultNodeList.length; i++) {
     		let xmlNode = resultNodeList[i];
     		let xmlNodeToString = '<node>' + $(xmlNode).html() + '</node>';
@@ -55,7 +37,8 @@ class Parser {
 				activityShape.parentId = xmlNodeStringToJSON.parentid;
 				activityShape.fsParentId = xmlNodeStringToJSON.fs_parent_id;
 				
-				centerLane.children.push(activityShape.id);
+				// 0 = center, 1 = left, 2 = right
+				data.laneShapes[0].children.push(activityShape.fId);
 				data.activityShapes.push(activityShape);
 				
 			// folder
@@ -83,7 +66,9 @@ class Parser {
 						}
 					}
 				}
-				rightLane.children.push(folderShape.id);
+				
+				// 0 = center, 1 = left, 2 = right
+				(inout == 'in') ? data.laneShapes[1].children.push(folderShape.fId) : data.laneShapes[2].children.push(folderShape.fId)
 				
 			// ed
 			} else if(xmlNodeStringToJSON.kind == 'E') {
@@ -115,126 +100,81 @@ class Parser {
 						}
 					}
 				}
-		        rightLane.children.push(edShape.id);
+				
+				// 0 = center, 1 = left, 2 = right
+				(inout == 'in') ? data.laneShapes[1].children.push(edShape.fId) : data.laneShapes[2].children.push(edShape.fId)
 				
 			} else {
 				;
 			}
     	}
-    	
-    	data.laneShapes.push(centerLane);
-    	data.laneShapes.push(rightLane);
-    	
+    	return data;
+    }
+    
+    createMyWorkFlowData(inResultNodeList, outResultNodeList) {
+    	let data = new Object();
+		data.activityShapes = [];
+		data.laneShapes = [];
+		data.workFlowType = 'myWorkFlow';
+		
+		let centerLane = new LaneShape('myWorkFlowLane');
+		centerLane.id ='myWorkFlowLane';
+		centerLane.name = 'myWorkFlowLane';
+		centerLane.children = [];
+		centerLane.laneType = 'center';
+		
+		let leftLane = new LaneShape('myWorkFlowLane');
+        leftLane.id = 'myWorkFlowLane';
+        leftLane.name = 'myWorkFlowLane';
+        leftLane.children = [];
+        leftLane.laneType = 'left';
+        
+        let rightLane = new LaneShape('myWorkFlowLane');
+        rightLane.id = 'myWorkFlowLane';
+        rightLane.name = 'myWorkFlowLane';
+        rightLane.children = [];
+        rightLane.laneType = 'right';
+		
+        // critical path 
+        // push  순서 반드시 지켜야 함.
+        data.laneShapes.push(centerLane);
+        data.laneShapes.push(leftLane);
+        data.laneShapes.push(rightLane);
+        
+        if(inResultNodeList != null) {
+        	data = this.createWorkFlowData(data, inResultNodeList, 'in');
+        }
+        
+        if(outResultNodeList != null) {
+        	data = this.createWorkFlowData(data, outResultNodeList, 'out');
+        }
         return data;
     }
 
-    createMyWorkFlowData() {
-        let data = new Object();
-        data.activityShapes = [];
-        data.laneShapes = [];
-        data.workFlowType = 'myWorkFlow';
+    createOtherWorkFlowData(resultNodeList) {
+    	let data = new Object();
+		data.activityShapes = [];
+		data.laneShapes = [];
+		data.workFlowType = 'otherWorkFlow';
+		
+		let centerLane = new LaneShape('otherWorkFlowLane');
+		centerLane.id ='otherWorkFlowLane';
+		centerLane.name = 'otherWorkFlowLane';
+		centerLane.children = [];
+		centerLane.laneType = 'center';
 
-        let activity2 = new ActivityShape("Line List");
-        activity2.id = 'Activity2';
-        activity2.name = 'Line List 작성';
-        activity2.parentId = '';
-
-        let activity3 = new ActivityShape("FA");
-        activity3.id = 'Activity3';
-        activity3.name = 'FA 제출';
-        activity3.parentId = '';
-
-        // first folders
-        let f10 = new FolderShape("F10");
-        f10.id = 'F10';
-        f10.name = 'F10';
-        f10.parentId = 'Activity2';
-        f10.direction = 'right';
-
-        // second folder
-        let f20 = new FolderShape("F20");
-        f20.id = 'F20';
-        f20.name = 'F20';
-        f20.parentId = 'Activity2';
-        f20.direction = 'right';
-
-        // child folder
-        let f10_1 = new FolderShape("F10-1");
-        f10_1.id = 'F10-1';
-        f10_1.name = 'F10-1';
-        f10_1.parentId = 'F10';
-        f10_1.direction = 'right';
-
-        // child folder
-        let f10_2 = new FolderShape("F10-2");
-        f10_2.id = 'F10-2';
-        f10_2.name = 'F10-2';
-        f10_2.parentId = 'F10';
-        f10_2.direction = 'right';
-
-        // first ed
-        let ed10 = new EDShape("Process desi...");
-        ed10.id = 'ED10';
-        ed10.name = 'Process design data for Compressed air system';
-        ed10.parentId = 'F10-1';
-        ed10.direction = 'right';
-
-        // second ed
-        let ed20 = new EDShape("Terminal Poi...");
-        ed20.id = 'ED2';
-        ed20.name = 'Terminal Point List';
-        ed20.parentId = 'F10-2';
-        ed20.direction = 'right';
-
-        // third ed
-        let ed30 = new EDShape("PDF");
-        ed30.id = 'ED30';
-        ed30.name = 'PDF';
-        ed30.parentId = 'F20';
-        ed30.direction = 'right';
-
-        // forth ed
-        let ed40 = new EDShape("Line List");
-        ed40.id = 'ED40';
-        ed40.name = 'Line List';
-        ed40.parentId = 'F10-1';
-        ed40.direction = 'right';
-
-        let lane1 = new LaneShape('myWorkFlowLane');
-        lane1.id = 'myWorkFlowLane';
-        lane1.name = 'myWorkFlowLane';
-        lane1.children = ['Activity2','Activity3'];
-        lane1.laneType = 'center';
-
-        let lane2 = new LaneShape('myWorkFlowLane');
-        lane2.id = 'myWorkFlowLane';
-        lane2.name = 'myWorkFlowLane';
-        lane2.children = ['F1','F1-1','F1-2','F2','ED1','ED2','ED3','ED4'];
-        lane2.laneType = 'right';
-
-        let lane3 = new LaneShape('myWorkFlowLane');
-        lane3.id = 'myWorkFlowLane';
-        lane3.name = 'myWorkFlowLane';
-        lane3.laneType = 'left';
-
-        f10_1.edShapes.push(ed10);
-        f10_2.edShapes.push(ed20);
-        f20.edShapes.push(ed30);
-        f10_1.edShapes.push(ed40);
-
-        f10.folderShapes.push(f10_1);
-        f10.folderShapes.push(f10_2);
-
-        activity2.rightFolderShapes.push(f10);
-        activity2.rightFolderShapes.push(f20);
-
-        data.activityShapes.push(activity2);
-        data.activityShapes.push(activity3);
-        // 반드시 순서대로 넣어야 한다. left, center, right
-        data.laneShapes.push(lane3);
-        data.laneShapes.push(lane1);
-        data.laneShapes.push(lane2);
-
+        let rightLane = new LaneShape('otherWorkFlowLane');
+        rightLane.id = 'otherWorkFlowLane';
+        rightLane.name = 'otherWorkFlowLane';
+        rightLane.children = [];
+        rightLane.laneType = 'right';
+		
+        data.laneShapes.push(centerLane);
+        data.laneShapes.push(rightLane);
+        
+        if(typeof resultNodeList != 'undefined' && resultNodeList != null) {
+        	 data = this.createWorkFlowData(data, resultNodeList);
+        }
         return data;
     }
 

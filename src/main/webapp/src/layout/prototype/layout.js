@@ -91,16 +91,16 @@ class Layout {
 
                 let createdActivityShape = this.type.renderActivityShape(activityShape);
 
-                let createdLeftActivityCollapseShape = null;
-                let createdRightActivityCollapseShape = null;
+                let createdLeftActivityFolderManager = null;
+                let createdRightActivityFolderManager = null;
 
                 if(workFlowType == 'myWorkFlow') {
-                    createdLeftActivityCollapseShape = this.type.renderFolderManagerShape(createdActivityShape, 'left');
-                    this.type.renderEdgeShape(createdActivityShape, createdLeftActivityCollapseShape);
+                    createdLeftActivityFolderManager = this.type.renderFolderManagerShape(createdActivityShape, 'left');
+                    this.type.renderEdgeShape(createdActivityShape, createdLeftActivityFolderManager);
                 }
 
-                createdRightActivityCollapseShape = this.type.renderFolderManagerShape(createdActivityShape, 'right');
-                this.type.renderEdgeShape(createdActivityShape, createdRightActivityCollapseShape);
+                createdRightActivityFolderManager = this.type.renderFolderManagerShape(createdActivityShape, 'right');
+                this.type.renderEdgeShape(createdActivityShape, createdRightActivityFolderManager);
 
                 // find folders
                 let leftFolderShapes = activityShape.leftFolderShapes;
@@ -113,8 +113,8 @@ class Layout {
                             folderShape.index = beforeLastIndex + activityShape.index;
                             folderShape.workFlowType = workFlowType;
 
-                            let createdFolderShape = this.type.renderFolderShape(folderShape, createdLeftActivityCollapseShape);
-                            this.type.renderEdgeShape(createdLeftActivityCollapseShape, createdFolderShape);
+                            let createdFolderShape = this.type.renderFolderShape(folderShape, createdLeftActivityFolderManager);
+                            this.type.renderEdgeShape(createdLeftActivityFolderManager, createdFolderShape);
 
                             let createdFolderCollapseShape = this.type.renderFolderManagerShape(createdFolderShape, 'left');
                             this.type.renderEdgeShape(createdFolderShape, createdFolderCollapseShape);
@@ -160,8 +160,8 @@ class Layout {
                             folderShape.index = beforeLastIndex + activityShape.index;
                             folderShape.workFlowType = workFlowType;
 
-                            let createdFolderShape = this.type.renderFolderShape(folderShape, createdRightActivityCollapseShape);
-                            this.type.renderEdgeShape(createdRightActivityCollapseShape, createdFolderShape);
+                            let createdFolderShape = this.type.renderFolderShape(folderShape, createdRightActivityFolderManager);
+                            this.type.renderEdgeShape(createdRightActivityFolderManager, createdFolderShape);
 
                             let createdFolderCollapseShape = this.type.renderFolderManagerShape(createdFolderShape, 'right');
                             this.type.renderEdgeShape(createdFolderShape, createdFolderCollapseShape);
@@ -194,14 +194,13 @@ class Layout {
                 }
             }
         }
-
+        
         let laneShapes = activityJSONData.laneShapes;
         if(typeof laneShapes != 'undefined' && laneShapes.length > 0) {
             for(let i in laneShapes) {
                 this.type.renderLaneShape(laneShapes[i], workFlowType);
             }
         }
-
         this.sendLaneToBack();
         this.replaceTop();
     }
@@ -373,7 +372,7 @@ class Layout {
         let children = laneShape.children;
         for(let i in children) {
             $('[_shape="IMAGE"]').each((index, element) => {
-                if(element.shape.id == children[i]) {
+                if(element.shape.fId == children[i]) {
                     replaceChildren.push(element.id);
 
                     // add folderManager
