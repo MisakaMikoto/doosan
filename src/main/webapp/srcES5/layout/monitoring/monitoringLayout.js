@@ -74,7 +74,7 @@ var MonitoringLayout = function (_Layout) {
         value: function renderLaneShape(laneShape) {
             laneShape = this.setReplaceLaneChildren(laneShape);
             var laneShapeChildren = laneShape.children;
-            var lastChild = $('#' + laneShapeChildren.pop())[0];
+            var lastChild = laneShape.laneType == 'center' ? $('#' + laneShapeChildren[0])[0] : $('#' + laneShapeChildren[laneShapeChildren.length - 1])[0];
 
             if (laneShape.laneType == 'center') {
                 laneShape.width = lastChild.shape.width + 75 + 25;

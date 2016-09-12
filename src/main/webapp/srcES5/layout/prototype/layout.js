@@ -58,35 +58,35 @@ var Layout = function () {
                 for (var i in activityShapes) {
                     var activityShape = activityShapes[i];
                     activityShape.level = 0;
-                    activityShape.index = beforeLastIndex;
+                    activityShape.index = beforeLastIndex + Number(i);
                     activityShape.workFlowType = workFlowType;
 
                     var createdActivityShape = this.type.renderActivityShape(activityShape);
 
-                    var createdLeftActivityCollapseShape = null;
-                    var createdRightActivityCollapseShape = null;
+                    var createdLeftActivityFolderManager = null;
+                    var createdRightActivityFolderManager = null;
 
                     if (workFlowType == 'myWorkFlow') {
-                        createdLeftActivityCollapseShape = this.type.renderFolderManagerShape(createdActivityShape, 'left');
-                        this.type.renderEdgeShape(createdActivityShape, createdLeftActivityCollapseShape);
+                        createdLeftActivityFolderManager = this.type.renderFolderManagerShape(createdActivityShape, 'left');
+                        this.type.renderEdgeShape(createdActivityShape, createdLeftActivityFolderManager);
                     }
 
-                    createdRightActivityCollapseShape = this.type.renderFolderManagerShape(createdActivityShape, 'right');
-                    this.type.renderEdgeShape(createdActivityShape, createdRightActivityCollapseShape);
+                    createdRightActivityFolderManager = this.type.renderFolderManagerShape(createdActivityShape, 'right');
+                    this.type.renderEdgeShape(createdActivityShape, createdRightActivityFolderManager);
 
                     // find folders
                     var leftFolderShapes = activityShape.leftFolderShapes;
                     if (typeof leftFolderShapes != 'undefined' && leftFolderShapes.length > 0) {
-                        for (var _i in leftFolderShapes) {
-                            if (activityShape.id == leftFolderShapes[_i].parentId) {
-                                var folderShape = leftFolderShapes[_i];
+                        for (var j in leftFolderShapes) {
+                            if (activityShape.id == leftFolderShapes[j].parentId) {
+                                var folderShape = leftFolderShapes[j];
                                 folderShape.parentId = activityShape.id;
                                 folderShape.level = activityShape.level - 1;
                                 folderShape.index = beforeLastIndex + activityShape.index;
                                 folderShape.workFlowType = workFlowType;
 
-                                var createdFolderShape = this.type.renderFolderShape(folderShape, createdLeftActivityCollapseShape);
-                                this.type.renderEdgeShape(createdLeftActivityCollapseShape, createdFolderShape);
+                                var createdFolderShape = this.type.renderFolderShape(folderShape, createdLeftActivityFolderManager);
+                                this.type.renderEdgeShape(createdLeftActivityFolderManager, createdFolderShape);
 
                                 var createdFolderCollapseShape = this.type.renderFolderManagerShape(createdFolderShape, 'left');
                                 this.type.renderEdgeShape(createdFolderShape, createdFolderCollapseShape);
@@ -98,14 +98,14 @@ var Layout = function () {
                                 }
 
                                 // find eds
-                                var edShapes = leftFolderShapes[_i].edShapes;
+                                var edShapes = leftFolderShapes[j].edShapes;
                                 if (typeof edShapes != 'undefined' && edShapes.length > 0) {
-                                    for (var _i2 in edShapes) {
-                                        if (folderShape.id == edShapes[_i2].parentId) {
-                                            var edShape = edShapes[_i2];
+                                    for (var k in edShapes) {
+                                        if (folderShape.id == edShapes[k].parentId) {
+                                            var edShape = edShapes[k];
                                             edShape.parentId = folderShape.id;
                                             edShape.level = folderShape.level - 1;
-                                            edShape.index = folderShape.index + Number(_i2);
+                                            edShape.index = folderShape.index + Number(k);
                                             edShape.workFlowType = workFlowType;
 
                                             var createdEDShape = this.type.renderEDShape(edShape, createdFolderCollapseShape);
@@ -124,16 +124,16 @@ var Layout = function () {
                     // find folders
                     var rightFolderShapes = activityShape.rightFolderShapes;
                     if (typeof rightFolderShapes != 'undefined' && rightFolderShapes.length > 0) {
-                        for (var _i3 in rightFolderShapes) {
-                            if (activityShape.id == rightFolderShapes[_i3].parentId) {
-                                var _folderShape = rightFolderShapes[_i3];
+                        for (var _j in rightFolderShapes) {
+                            if (activityShape.id == rightFolderShapes[_j].parentId) {
+                                var _folderShape = rightFolderShapes[_j];
                                 _folderShape.parentId = activityShape.id;
                                 _folderShape.level = activityShape.level + 1;
                                 _folderShape.index = beforeLastIndex + activityShape.index;
                                 _folderShape.workFlowType = workFlowType;
 
-                                var _createdFolderShape = this.type.renderFolderShape(_folderShape, createdRightActivityCollapseShape);
-                                this.type.renderEdgeShape(createdRightActivityCollapseShape, _createdFolderShape);
+                                var _createdFolderShape = this.type.renderFolderShape(_folderShape, createdRightActivityFolderManager);
+                                this.type.renderEdgeShape(createdRightActivityFolderManager, _createdFolderShape);
 
                                 var _createdFolderCollapseShape = this.type.renderFolderManagerShape(_createdFolderShape, 'right');
                                 this.type.renderEdgeShape(_createdFolderShape, _createdFolderCollapseShape);
@@ -145,14 +145,14 @@ var Layout = function () {
                                 }
 
                                 // find eds
-                                var _edShapes = rightFolderShapes[_i3].edShapes;
+                                var _edShapes = rightFolderShapes[_j].edShapes;
                                 if (typeof _edShapes != 'undefined' && _edShapes.length > 0) {
-                                    for (var _i4 in _edShapes) {
-                                        if (_folderShape.id == _edShapes[_i4].parentId) {
-                                            var _edShape = _edShapes[_i4];
+                                    for (var _k in _edShapes) {
+                                        if (_folderShape.id == _edShapes[_k].parentId) {
+                                            var _edShape = _edShapes[_k];
                                             _edShape.parentId = _folderShape.id;
                                             _edShape.level = _folderShape.level + 1;
-                                            _edShape.index = _folderShape.index + Number(_i4);
+                                            _edShape.index = _folderShape.index + Number(_k);
                                             _edShape.workFlowType = workFlowType;
 
                                             var _createdEDShape = this.type.renderEDShape(_edShape, _createdFolderCollapseShape);
@@ -169,27 +169,16 @@ var Layout = function () {
 
             var laneShapes = activityJSONData.laneShapes;
             if (typeof laneShapes != 'undefined' && laneShapes.length > 0) {
-                for (var _i5 in laneShapes) {
-                    this.type.renderLaneShape(laneShapes[_i5], workFlowType);
+                for (var _i in laneShapes) {
+                    this.type.renderLaneShape(laneShapes[_i], workFlowType);
                 }
             }
-
             this.sendLaneToBack();
             this.replaceTop();
         }
     }, {
         key: 'recursiveFolder',
-        value: function (_recursiveFolder) {
-            function recursiveFolder(_x, _x2, _x3, _x4) {
-                return _recursiveFolder.apply(this, arguments);
-            }
-
-            recursiveFolder.toString = function () {
-                return _recursiveFolder.toString();
-            };
-
-            return recursiveFolder;
-        }(function (folderShapes, rootCollapseShape, direction, workFlowType) {
+        value: function recursiveFolder(folderShapes, rootCollapseShape, direction, workFlowType) {
             var beforeLastIndex = rootCollapseShape.shape.index;
 
             // find folder
@@ -215,7 +204,7 @@ var Layout = function () {
 
                         var childFolderShapes = folderShape.folderShapes;
                         if (typeof childFolderShapes != 'undefined' && childFolderShapes.length > 0) {
-                            recursiveFolder(childFolderShapes, createdFolderShape, direction);
+                            this.recursiveFolder(childFolderShapes, createdFolderShape, direction);
                         }
                         // save last index and level
                         beforeLastIndex = folderShape.index;
@@ -223,9 +212,9 @@ var Layout = function () {
                         // find eds
                         var edShapes = folderShapes[i].edShapes;
                         if (typeof edShapes != 'undefined' && edShapes.length > 0) {
-                            for (var _i6 in edShapes) {
-                                if (folderShape.id == edShapes[_i6].parentId) {
-                                    var edShape = edShapes[_i6];
+                            for (var j in edShapes) {
+                                if (folderShape.id == edShapes[j].parentId) {
+                                    var edShape = edShapes[j];
                                     edShape.parentId = folderShape.id;
 
                                     if (direction == 'left') {
@@ -233,7 +222,7 @@ var Layout = function () {
                                     } else {
                                         edShape.level = folderShape.level + 1;
                                     }
-                                    edShape.index = folderShape.index + Number(_i6);
+                                    edShape.index = folderShape.index + Number(j);
                                     edShape.workFlowType = workFlowType;
 
                                     var createdEDShape = this.type.renderEDShape(edShape, createdFolderCollapseShape);
@@ -246,7 +235,7 @@ var Layout = function () {
                 }
             }
             return beforeLastIndex;
-        })
+        }
     }, {
         key: 'sendLaneToBack',
         value: function sendLaneToBack() {
@@ -306,11 +295,9 @@ var Layout = function () {
     }, {
         key: 'getCenterMyFLowLaneShape',
         value: function getCenterMyFLowLaneShape() {
-            var _this = this;
-
             var centerMyFlowLane = null;
             $('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each(function (index, element) {
-                if (_this.shape.laneType == 'center') {
+                if (element.shape.laneType == 'center') {
                     centerMyFlowLane = element;
                     return false;
                 }
@@ -329,6 +316,20 @@ var Layout = function () {
             return standardLaneShape;
         }
     }, {
+        key: 'getShapeLeftAllChildren',
+        value: function getShapeLeftAllChildren(shape, children) {
+            var nextShapes = this.canvas._RENDERER.getNextShapes(shape);
+            if (nextShapes.length > 0) {
+                for (var i in nextShapes) {
+                    if ((nextShapes[i].shape instanceof FolderShape || nextShapes[i].shape instanceof EDShape) && nextShapes[i].shape.direction == 'left') {
+                        children.push(nextShapes[i]);
+                    }
+                    this.getShapeLeftAllChildren(nextShapes[i], children);
+                }
+            }
+            return children;
+        }
+    }, {
         key: 'getShapeRightAllChildren',
         value: function getShapeRightAllChildren(shape, children) {
             var nextShapes = this.canvas._RENDERER.getNextShapes(shape);
@@ -345,13 +346,22 @@ var Layout = function () {
     }, {
         key: 'setReplaceLaneChildren',
         value: function setReplaceLaneChildren(laneShape) {
+            var _this = this;
+
             var replaceChildren = [];
             var children = laneShape.children;
 
             var _loop = function _loop(i) {
                 $('[_shape="IMAGE"]').each(function (index, element) {
-                    if (element.shape.id == children[i]) {
+                    if (element.shape.fId == children[i]) {
                         replaceChildren.push(element.id);
+
+                        // add folderManager
+                        // critical
+                        var folderManager = _this.canvas._RENDERER.getNextShapes($('#' + element.id));
+                        if (folderManager.length > 0) {
+                            replaceChildren.push(folderManager[0].id);
+                        }
                     }
                 });
             };
@@ -362,33 +372,49 @@ var Layout = function () {
             laneShape.children = replaceChildren;
             return laneShape;
         }
+
+        // critical method
+
     }, {
-        key: 'replaceShape',
-        value: function replaceShape(targetShape, direction, moveLevel) {
-            var offset = [];
-            var x = 0;
-            if (direction == 'right') {
-                x += 75 * moveLevel;
-            } else {
-                x -= 75 * moveLevel;
-            }
-            var y = 0;
+        key: 'replace',
+        value: function replace(targetShape, targetLane) {
+            // replace function operate not root folderManager
+            if (!(this.canvas._RENDERER.getPrevShapes(targetShape)[0].shape instanceof ActivityShape)) {
+                var changeIndex = 0;
+                var children = null;
 
-            offset.push(x);
-            offset.push(y);
+                if (targetShape.shape.direction == 'left') {
+                    children = this.getShapeLeftAllChildren(targetShape, []);
+                } else {
+                    children = this.getShapeRightAllChildren(targetShape, []);
+                }
 
-            this.autoIncreaseCanvasSize(targetShape.shape);
-            this.autoIncreaseLaneSize(targetShape.shape);
+                var lastPositionChild = children[children.length - 1];
 
-            this.canvas._RENDERER.move(targetShape, offset);
-            this.replaceEdge();
-        }
-    }, {
-        key: 'replaceEdge',
-        value: function replaceEdge() {
-            var allEdges = this.canvas._RENDERER.getAllEdges();
-            for (var i in allEdges) {
-                this.canvas._RENDERER.reconnect(allEdges[i]);
+                for (var i in targetLane.shape.children) {
+                    var offset = [];
+                    var x = 0;
+                    var y = 0;
+
+                    var child = $('#' + targetLane.shape.children[i])[0];
+                    if (targetShape.shape.type == 'close') {
+                        changeIndex = lastPositionChild.shape.index - targetShape.shape.index;
+
+                        if (child.shape.index > lastPositionChild.shape.index) {
+                            y -= 90 * changeIndex;
+                        }
+                    } else {
+                        changeIndex = lastPositionChild.shape.index;
+
+                        if (children.length > 1 && targetShape.shape.index < child.shape.index && changeIndex < child.shape.index) {
+                            y += 90 * changeIndex;
+                        }
+                    }
+
+                    offset.push(x);
+                    offset.push(y);
+                    this.canvas._RENDERER.move(child, offset);
+                }
             }
         }
     }, {

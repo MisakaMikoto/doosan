@@ -40,12 +40,16 @@ var EditorLayout = function (_Layout) {
             activityShape.width = 50;
             activityShape.height = 50;
 
-            if (activityShape.workFlowType == 'otherWorkFlow') {
-                activityShape.x = 50 + 15;
+            var otherWorkFlowCenterWidth = 50 + 75 + 20;
+            var otherWorkFlowRightWidth = (50 + 75 + 20) * 6;
+            var myWorkFlowLeftWidth = (50 + 75 + 20) * 6;
+            var myWorkFlowCenterWidth = 50 + 75 + 20;
+            var myWorkFlowRightWidth = (50 + 75 + 20) * 6;
+
+            if (activityShape.workFlowType == 'myWorkFlow') {
+                activityShape.x = otherWorkFlowCenterWidth + otherWorkFlowRightWidth + myWorkFlowLeftWidth + myWorkFlowCenterWidth / 2;
             } else {
-                var firstOtherFlowLane = this.getFirstOtherFLowLaneShape();
-                var lastOtherFlowLane = this.getLastOtherFLowLaneShape();
-                activityShape.x = firstOtherFlowLane.shape.x + lastOtherFlowLane.shape.width + (lastOtherFlowLane.shape.x + lastOtherFlowLane.shape.width / 2);
+                activityShape.x = otherWorkFlowCenterWidth / 2;
             }
             activityShape.y = 90 * (activityShape.index + 1);
 
@@ -63,64 +67,82 @@ var EditorLayout = function (_Layout) {
     }, {
         key: 'renderLaneShape',
         value: function renderLaneShape(laneShape, workFlowType) {
+            var laneActivityChildrenLength = laneShape.children.length;
             laneShape = this.setReplaceLaneChildren(laneShape);
             var laneShapeChildren = laneShape.children;
-            var lastChild = $('#' + laneShapeChildren.pop())[0];
 
-            if (workFlowType == 'otherWorkFlow') {
-                // activity lane
+            var otherWorkFlowCenterWidth = 50 + 75 + 20;
+            var otherWorkFlowRightWidth = (50 + 75 + 20) * 6;
+            var myWorkFlowLeftWidth = (50 + 75 + 20) * 6;
+            var myWorkFlowCenterWidth = 50 + 75 + 20;
+            var myWorkFlowRightWidth = (50 + 75 + 20) * 6;
+
+            if (workFlowType == 'myWorkFlow') {
                 if (laneShape.laneType == 'center') {
-                    // activityShape width + margin + folderManager width - 5
-                    laneShape.width = 50 + 75 + 15 - 2;
-                    laneShape.x = laneShape.width / 2 + 2;
+                    laneShape.width = myWorkFlowCenterWidth;
+                    laneShape.x = otherWorkFlowCenterWidth + otherWorkFlowRightWidth + myWorkFlowLeftWidth + laneShape.width / 2;
                 } else if (laneShape.laneType == 'right') {
+                    // activity width : 50, folderManager : 50, margin : 75
+                    laneShape.width = myWorkFlowRightWidth;
+                    laneShape.x = otherWorkFlowCenterWidth + otherWorkFlowRightWidth + myWorkFlowLeftWidth + myWorkFlowCenterWidth + laneShape.width / 2;
+                } else {
+                    laneShape.width = myWorkFlowLeftWidth;
+                    laneShape.x = otherWorkFlowCenterWidth + otherWorkFlowRightWidth + laneShape.width / 2;
+                }
 
-                    var lastOtherFlowLane = this.getLastOtherFLowLaneShape();
-                    // activity width : 50, folderManager : 20, margin : 75
-                    laneShape.width = 50 * lastChild.shape.level + 20 * lastChild.shape.level + 75 * lastChild.shape.level;
-                    laneShape.x = lastOtherFlowLane.shape.x + lastOtherFlowLane.shape.width / 2 + laneShape.width / 2;
+                if (laneShapeChildren.length > 0) {
+                    laneShape.height = (laneActivityChildrenLength + 1) * 90 - 2;
+                } else {
+                    var laneShapeHeight = null;
+                    $('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each(function (index, element) {
+                        if (element.shape.laneType == 'center') {
+                            laneShapeHeight = element.shape.height;
+                            return false;
+                        }
+                    });
+                    if (laneShapeHeight != null) {
+                        laneShape.height = laneShapeHeight;
+                    }
+                }
+                laneShape.y = laneShape.height / 2 + 2;
+            } else if (workFlowType == 'otherWorkFlow') {
+                if (laneShape.laneType == 'center') {
+                    laneShape.width = otherWorkFlowCenterWidth;
+                    laneShape.x = laneShape.width / 2;
+                } else if (laneShape.laneType == 'right') {
+                    laneShape.width = otherWorkFlowRightWidth;
+                    laneShape.x = otherWorkFlowCenterWidth + laneShape.width / 2;
                 } else {
                     ;
                 }
-            } else if (workFlowType == 'myWorkFlow') {
-                if (laneShape.laneType == 'center') {
-                    var firstOtherFlowLane = this.getFirstOtherFLowLaneShape();
-                    var firstMyFlowLane = this.getFirstMyFLowLaneShape();
-                    laneShape.width = firstOtherFlowLane.shape.width;
-                    laneShape.x = firstMyFlowLane.shape.x + firstMyFlowLane.shape.width / 2 + laneShape.width / 2;
-                } else if (laneShape.laneType == 'right') {
-                    var lastMyFlowLane = this.getLastMyFLowLaneShape();
 
-                    // activity width : 50, folderManager : 50, margin : 75
-                    laneShape.width = 50 * lastChild.shape.level + 30 * lastChild.shape.level + 75 * lastChild.shape.level;
-                    laneShape.x = lastMyFlowLane.shape.x + lastMyFlowLane.shape.width / 2 + laneShape.width / 2;
+                var myWorkFlowlaneShapeHeight = null;
+                $('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each(function (index, element) {
+                    if (element.shape.laneType == 'center') {
+                        myWorkFlowlaneShapeHeight = element.shape.height;
+                        return false;
+                    }
+                });
+
+                if (myWorkFlowlaneShapeHeight < laneShapeChildren.length * 90 - 2) {
+                    laneShape.height = laneShapeChildren.length * 90 - 2;
+
+                    $('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each(function (index, element) {
+                        element.shape.height = laneShape.height;
+                    });
                 } else {
-                    var _lastOtherFlowLane = this.getLastOtherFLowLaneShape();
-                    laneShape.width = _lastOtherFlowLane.shape.width;
-                    laneShape.x = _lastOtherFlowLane.shape.x + _lastOtherFlowLane.shape.width / 2 + laneShape.width / 2;
+                    laneShape.height = myWorkFlowlaneShapeHeight;
                 }
+                laneShape.y = laneShape.height / 2 + 2;
             } else {
                 ;
-            }
-
-            if (lastChild != null) {
-                if (90 * lastChild.shape.level < 600) {
-                    laneShape.height = $('svg').height() - 2;
-                    laneShape.y = laneShape.height / 2 + 2;
-                } else {
-                    laneShape.height = 90 * lastChild.level - 2;
-                    laneShape.y = 90 * lastChild.level + 2;
-                }
-            } else {
-                var _lastOtherFlowLane2 = this.getLastOtherFLowLaneShape();
-                laneShape.height = _lastOtherFlowLane2.shape.height;
-                laneShape.y = _lastOtherFlowLane2.shape.y;
             }
 
             var shapeRenderer = new ShapeRenderer();
             shapeRenderer.canvas = this.canvas;
             shapeRenderer.shape = laneShape;
             shapeRenderer.option = { stroke: 'black' };
+
             return shapeRenderer.render();
         }
     }, {
@@ -221,46 +243,60 @@ var EditorLayout = function (_Layout) {
             return renderFolderManagerShape;
         }
 
-        // critical
+        // critical method
 
     }, {
         key: 'renderShare',
         value: function renderShare(sourceShape, targetShape) {
-            //let sourceFolderManager = this.getRightFolderManager(sourceShape);
-            //
-            //let sourceShapeAllElement = this.getShapeAllParent(sourceFolderManager, []);
-            //sourceShapeAllElement = this.getShapeAllChild(sourceFolderManager, sourceShapeAllElement);
-            //sourceShapeAllElement = this.createUniqueArray(sourceShapeAllElement, targetRightAllParent);
-            //sourceShapeAllElement = this.sortSharedArrayByLevel(sourceShapeAllElement);
+            //let targetFolderManager = this.getLeftFolderManager(targetShape);
 
-            var targetFolderManager = this.getLeftFolderManager(targetShape);
             var sourceParentElements = this.getShapeAllParent(sourceShape, []);
-            var beforeShape = targetFolderManager;
 
-            var targetAllElement = this.getShapeAllParent(targetShape, []);
-            targetAllElement = this.getShapeAllChild(targetFolderManager, targetAllElement);
-
-            if (targetAllElement.length > 0) {
-                var sourceShapeParent = this.findSourceShapeParent(sourceShape, targetAllElement);
-                sourceParentElements = this.createUniqueArray(sourceParentElements, targetAllElement);
-
-                beforeShape = this.canvas._RENDERER.getNextShapes(sourceShapeParent)[0];
-            }
+            var targetAllElement = [];
+            targetAllElement.push(targetShape);
+            targetAllElement = this.getShapeAllParent(targetShape, targetAllElement);
+            targetAllElement = this.getShapeAllChild(targetShape, targetAllElement);
+            sourceParentElements = this.createUniqueArray(sourceParentElements, targetAllElement);
 
             // folder 혹은 ed 를 자식의 어떤 도형에 떨구어도 부모를 찾는 유도 로직
             // critical
-            if (sourceParentElements.length > 0) {
-                sourceParentElements = this.changeSharedInformation(sourceParentElements, targetShape);
-                // draw parent
-                beforeShape = this.renderShareParent(beforeShape, sourceParentElements);
+            if (targetAllElement.length > 0) {
+                var tempShape = null;
+
+                // target 이 액티비티인 경우
+                if (targetShape.shape instanceof ActivityShape) {
+                    // source 의 부모가 있는 경우
+                    if (sourceParentElements.length > 0 && targetAllElement.length == 1) {
+                        tempShape = this.changeSharedInformation(sourceParentElements, targetShape)[0];
+
+                        // 없는 경우
+                    } else {
+                        tempShape = sourceShape;
+                        tempShape = this.changeSharedInformation(tempShape, targetShape);
+                    }
+
+                    // 폴더인 경우
+                } else if (targetShape.shape instanceof FolderShape) {
+                    tempShape = sourceShape;
+                } else {
+                    ;
+                }
+
+                var shapeParent = this.findSourceShapeParent(tempShape, targetAllElement);
+                var beforeShape = this.getLeftFolderManager(shapeParent);
+
+                // 부모를 찾지 못하면 도형을 붙이지 않는다.
+                if (typeof shapeParent != 'undefined' && shapeParent != null) {
+                    // draw parent
+                    if (sourceParentElements.length > 0) {
+                        beforeShape = this.renderShareParent(beforeShape, sourceParentElements);
+                    }
+                    // draw source
+                    this.renderShareSource(sourceShape, beforeShape, targetShape);
+                } else {
+                    ;
+                }
             }
-
-            // draw source
-            beforeShape = this.renderShareSource(sourceShape, beforeShape);
-
-            // 여기부터 작업 shareChidl 는 shareSource 안에서 동작하게 변경.
-            // draw child
-            this.renderShareChild(sourceShape, beforeShape, targetShape);
         }
     }, {
         key: 'renderShareParent',
@@ -290,7 +326,7 @@ var EditorLayout = function (_Layout) {
         }
     }, {
         key: 'renderShareSource',
-        value: function renderShareSource(sourceShape, beforeShape) {
+        value: function renderShareSource(sourceShape, beforeShape, targetShape) {
             sourceShape = this.changeSharedInformation(sourceShape);
 
             // draw source
@@ -303,6 +339,10 @@ var EditorLayout = function (_Layout) {
                 this.renderEdgeShape(createdSourceShape, createdSourceFolderManagerShape);
 
                 beforeShape = createdSourceFolderManagerShape;
+
+                if (sourceShape.shape.folderShapes.length > 0 || sourceShape.shape.edShapes.length > 0) {
+                    this.renderShareChild(sourceShape, beforeShape, targetShape);
+                }
             } else if (sourceShape.shape instanceof EDShape) {
                 createdSourceShape = this.renderFolderShape(sourceShape.shape, beforeShape);
                 this.renderEdgeShape(beforeShape, createdSourceShape);
@@ -420,19 +460,18 @@ var EditorLayout = function (_Layout) {
                 var target = $('#' + myWorkFlowLaneChild[i]);
                 var shapeOffset = target.offset();
 
-                // shape width and height 50 + plus margin area
-                var shapeTop = shapeOffset.top - 25;
-                var shapeBottom = shapeOffset.top + 50 + 25;
-                var shapeLeft = shapeOffset.left - 25;
-                var shapeRight = shapeOffset.left + 50 + 25;
-
                 // 25 is shapes margin area size
-                var draggableTop = ui.position.top;
-                var draggableBottom = ui.position.top + 50;
-                var draggableLeft = ui.position.left;
-                var draggableRight = ui.position.left;+50;
+                var shapeTop = shapeOffset.top - 25;
+                var shapeBottom = shapeOffset.top + target[0].shape.height + 25;
+                var shapeLeft = shapeOffset.left - 25;
+                var shapeRight = shapeOffset.left + target[0].shape.width + 25;
 
-                if (shapeBottom >= draggableBottom && draggableBottom >= shapeTop && shapeBottom >= draggableTop && draggableTop >= shapeTop && shapeLeft <= draggableLeft && draggableLeft <= shapeRight && shapeLeft <= draggableRight && draggableLeft <= shapeRight) {
+                var draggableTop = ui.position.top;
+                var draggableBottom = ui.position.top + target[0].shape.height;
+                var draggableLeft = ui.position.left;
+                var draggableRight = ui.position.left;+target[0].shape.width;
+
+                if (shapeBottom >= draggableBottom && draggableBottom >= shapeTop && shapeBottom >= draggableTop && draggableTop >= shapeTop && shapeLeft <= draggableLeft && draggableLeft <= shapeRight && shapeLeft <= draggableRight && draggableRight <= shapeRight) {
 
                     targetShape = target[0];
                     break;
@@ -443,7 +482,7 @@ var EditorLayout = function (_Layout) {
     }, {
         key: 'createShapeSpan',
         value: function createShapeSpan(ui, src) {
-            var pngSrc = src.split('.')[0] + '.png';
+            var pngSrc = src.split('svg')[0] + 'png';
             $('#draggable').css('display', 'block');
             $('#draggable').css('background-image', 'url(' + pngSrc + ')');
             $('#draggable').offset({ top: ui.position.top, left: ui.position.left });
@@ -458,8 +497,6 @@ var EditorLayout = function (_Layout) {
                             if (standardArray[i].shape.id == compareArray[j].shape.id) {
                                 standardArray.splice(i, 1);
                             }
-                        } else {
-                            break;
                         }
                     }
                 }
@@ -510,14 +547,20 @@ var EditorLayout = function (_Layout) {
         }
     }, {
         key: 'getShapeAllParent',
-        value: function getShapeAllParent(folderManager, parents) {
-            var prevShapes = this.canvas._RENDERER.getPrevShapes(folderManager);
+        value: function getShapeAllParent(targetShape, parents) {
+            var prevShapes = this.canvas._RENDERER.getPrevShapes(targetShape);
             if (prevShapes.length > 0) {
                 for (var i in prevShapes) {
                     var prevShape = prevShapes[i];
 
-                    if (prevShape.shape instanceof FolderShape) {
-                        parents.splice(0, 0, prevShape);
+                    if (targetShape.shape.direction == 'left') {
+                        if (prevShape.shape instanceof ActivityShape || prevShape.shape instanceof FolderShape) {
+                            parents.splice(0, 0, prevShape);
+                        }
+                    } else {
+                        if (prevShape.shape instanceof FolderShape) {
+                            parents.splice(0, 0, prevShape);
+                        }
                     }
                     this.getShapeAllParent(prevShape, parents);
                 }
@@ -525,41 +568,17 @@ var EditorLayout = function (_Layout) {
             return parents;
         }
     }, {
-        key: 'getShapeChild',
-        value: function getShapeChild(childFolderManager, children) {
-            var childNextShapes = this.canvas._RENDERER.getNextShapes(childFolderManager);
-            if (childNextShapes.length > 0) {
-                for (var i in childNextShapes) {
-                    var childNextShape = childNextShapes[i];
-
-                    if (childNextShape.shape instanceof FolderShape || childNextShape.shape instanceof EDShape) {
-                        children.push(childNextShape);
-
-                        var _childFolderManager = this.canvas._RENDERER.getNextShapes(childNextShape);
-                        if (_childFolderManager.length > 0) {
-                            this.getShapeChild(_childFolderManager, children);
-                        }
-                    }
-                }
-            }
-            return children;
-        }
-    }, {
         key: 'getShapeAllChild',
-        value: function getShapeAllChild(folderManager, children) {
-            var nextShapes = this.canvas._RENDERER.getNextShapes(folderManager);
+        value: function getShapeAllChild(targetShape, children) {
+            var nextShapes = this.canvas._RENDERER.getNextShapes(targetShape);
             if (nextShapes.length > 0) {
                 for (var i in nextShapes) {
                     var nextShape = nextShapes[i];
 
-                    if (nextShape.shape instanceof FolderShape || nextShape.shape instanceof EDShape) {
+                    if ((nextShape.shape instanceof FolderShape || nextShape.shape instanceof EDShape) && nextShape.shape.direction == 'left') {
                         children.push(nextShape);
-
-                        var childFolderManager = this.canvas._RENDERER.getNextShapes(nextShape);
-                        if (childFolderManager.length > 0) {
-                            children.concat(this.getShapeChild(childFolderManager, children));
-                        }
                     }
+                    this.getShapeAllChild(nextShape, children);
                 }
             }
             return children;
@@ -567,12 +586,21 @@ var EditorLayout = function (_Layout) {
     }, {
         key: 'addChildToLane',
         value: function addChildToLane(createdShape) {
-            $('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each(function () {
-                if (this.shape.laneType == 'center') {
-                    this.shape.children.push(createdShape.id);
+            var targetLane = null;
+            $('[_shape_id="OG.shape.doosan.myWorkFlowLane"]').each(function (index, element) {
+                if (element.shape.laneType == createdShape.shape.direction) {
+                    targetLane = element;
                     return false;
                 }
             });
+            targetLane.shape.children.push(createdShape.id);
+
+            // add folderManager
+            // critical
+            var folderManager = this.canvas._RENDERER.getNextShapes($('#' + createdShape.id));
+            if (folderManager.length > 0) {
+                targetLane.shape.children.push(folderManager[0].id);
+            }
         }
     }, {
         key: 'changeSharedInformation',
@@ -597,6 +625,9 @@ var EditorLayout = function (_Layout) {
                 }
                 return object;
             } else {
+                if (object.shape.level == 1) {
+                    object.shape.parentId = targetShape.shape.id;
+                }
                 object.shape.level = -object.shape.level;
                 object.shape.direction = 'left';
 

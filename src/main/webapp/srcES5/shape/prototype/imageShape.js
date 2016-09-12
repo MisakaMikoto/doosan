@@ -40,7 +40,12 @@ var ImageShape = function (_OG$shape$ImageShape) {
         _this._level = '';
         _this._index = '';
 
+        _this._id = '';
+        _this._fId = '';
+
         _this._parentId = '';
+        _this._fsParentId = '';
+
         _this._direction = '';
         _this._workFlowType = '';
         return _this;
@@ -103,12 +108,36 @@ var ImageShape = function (_OG$shape$ImageShape) {
             return Number(this._index);
         }
     }, {
+        key: 'id',
+        set: function set(id) {
+            this._id = id;
+        },
+        get: function get() {
+            return this._id;
+        }
+    }, {
+        key: 'fId',
+        set: function set(fId) {
+            this._fId = fId;
+        },
+        get: function get() {
+            return this._fId;
+        }
+    }, {
         key: 'parentId',
         set: function set(parentId) {
             this._parentId = parentId;
         },
         get: function get() {
             return this._parentId;
+        }
+    }, {
+        key: 'fsParentId',
+        set: function set(fsParentId) {
+            this._fsParentId = fsParentId;
+        },
+        get: function get() {
+            return this._fsParentId;
         }
     }, {
         key: 'direction',

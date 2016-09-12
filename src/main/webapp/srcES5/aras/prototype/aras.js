@@ -5,33 +5,39 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
- * Created by MisakaMikoto on 2016. 8. 9..
+ * Created by MisakaMikoto on 2016. 9. 6..
  */
-var CommonRest = function () {
-    function CommonRest() {
-        _classCallCheck(this, CommonRest);
-    }
+var Aras = function () {
+	function Aras() {
+		_classCallCheck(this, Aras);
 
-    _createClass(CommonRest, [{
-        key: 'callPOST',
-        value: function callPOST(url) {
-            $.ajax({
-                url: url,
-                type: 'POST',
-                data: {},
-                success: function success(data) {}
-            });
-        }
-    }, {
-        key: 'callGET',
-        value: function callGET(url) {
-            $.ajax({
-                url: url,
-                data: {},
-                success: function success(data) {}
-            });
-        }
-    }]);
+		this._arasObject = parent.top.aras != null && typeof parent.top.aras != 'undefined' ? parent.top.aras : '';
+		this._body = '';
+	}
 
-    return CommonRest;
+	_createClass(Aras, [{
+		key: 'applyMethod',
+		value: function applyMethod(methodName) {
+			var inn = this.arasObject.newIOMInnovator();
+			return inn.applyMethod(methodName, this.body);
+		}
+	}, {
+		key: 'arasObject',
+		set: function set(arasObject) {
+			this._arasObject = arasObject;
+		},
+		get: function get() {
+			return this._arasObject;
+		}
+	}, {
+		key: 'body',
+		set: function set(body) {
+			this._body = body;
+		},
+		get: function get() {
+			return this._body;
+		}
+	}]);
+
+	return Aras;
 }();
