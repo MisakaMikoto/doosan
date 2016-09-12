@@ -66,43 +66,8 @@ class Parser {
 						}
 					}
 				}
-				
 				// 0 = center, 1 = left, 2 = right
 				(inout == 'in') ? data.laneShapes[1].children.push(folderShape.fId) : data.laneShapes[2].children.push(folderShape.fId)
-				
-			// ed
-			} else if(xmlNodeStringToJSON.kind == 'E') {
-				let edShape = new EDShape(parseFsName);
-				edShape.fId = xmlNodeStringToJSON.f_id;
-				edShape.id = xmlNodeStringToJSON.id;
-				edShape.name = xmlNodeStringToJSON.fs_name;
-				edShape.parentId = xmlNodeStringToJSON.parentid;
-				edShape.fsParentId = xmlNodeStringToJSON.fs_parent_id;
-		        edShape.direction = 'right';
-		        
-		        // find activity
-				for(let i in data.activityShapes) {
-					let activityShape = data.activityShapes[i];
-					
-					 // find child folder
-					for(let j in activityShape.rightFolderShapes) {
-						let activityChildFolderShape = activityShape.rightFolderShapes[j];
-						
-						if(activityChildFolderShape.fId == edShape.fsParentId && activityChildFolderShape.id == edShape.parentId) {
-							activityChildFolderShape.edShapes.push(edShape);
-							
-						} else {
-							// recursive folder
-							for(let j in activityShape.rightFolderShapes) {
-								let childFolderShape = activityShape.rightFolderShapes[j];
-								this.recursiveFolder(childFolderShape, edShape);
-							}
-						}
-					}
-				}
-				
-				// 0 = center, 1 = left, 2 = right
-				(inout == 'in') ? data.laneShapes[1].children.push(edShape.fId) : data.laneShapes[2].children.push(edShape.fId)
 				
 			} else {
 				;

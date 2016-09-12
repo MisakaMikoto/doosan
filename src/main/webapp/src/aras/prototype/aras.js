@@ -3,7 +3,7 @@
  */
 class Aras {
 	constructor() {
-		 this._arasObject = (window.opener != null) ? window.opener.aras : '';
+		 this._arasObject = (parent.top.aras != null && typeof parent.top.aras != 'undefined') ? parent.top.aras : '';
 		 this._body = '';
 	}
 	set arasObject(arasObject) {

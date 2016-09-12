@@ -18,8 +18,8 @@ class Select extends Aras {
 	load(selectMethodName, inout) {
 		this.selectMethodName = selectMethodName;
 		
-		let wfId = (typeof opener != 'undefined') ? opener.parent.top.thisItem.getID() : '';
-		let stdYN = (typeof opener != 'undefined') ? opener.parent.top.thisItem.getType() == 'DHI_WF_WFT' ? 'Y' : 'N' : '';
+		let wfId = (parent.top.aras != null && typeof parent.top.aras != 'undefined') ? parent.top.thisItem.getID() : '';
+		let stdYN = (parent.top.aras != null && typeof parent.top.aras != 'undefined') ? parent.top.thisItem.getType() == 'DHI_WF_WFT' ? 'Y' : 'N' : '';
 		
 		let body = '<wf_id>' + wfId + '</wf_id>';
         body += '<std_yn>' + stdYN + '</std_yn>';

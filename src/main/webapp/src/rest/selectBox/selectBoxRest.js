@@ -5,8 +5,8 @@ class SelectBoxRest extends Rest {
 	constructor() {
 		super();
 		
-		this._wfId = (typeof opener != 'undefined') ? opener.parent.top.thisItem.getID() : '';
-		this._stdYN = (typeof opener != 'undefined') ? opener.parent.top.thisItem.getType() == 'DHI_WF_WFT' ? 'Y' : 'N' : '';
+		this._wfId = (parent.top.aras != null && typeof parent.top.aras != 'undefined') ? parent.top.thisItem.getID() : '';
+		this._stdYN = (parent.top.aras != null && typeof parent.top.aras != 'undefined') ? parent.top.thisItem.getType() == 'DHI_WF_WFT' ? 'Y' : 'N' : '';
 		this._projectId = "49BEBF8A1CDA4B96BF0A0C31EBB4B449";
 		this._canvas = '';
 	}
