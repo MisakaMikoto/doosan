@@ -13,6 +13,11 @@ class ShapeEvent {
     get canvas() {
         return this._canvas;
     }
+    
+    // child override this method
+    // if reflect event object, this method confirmed 
+    add() {
+    }
 
     bindDraggable(shape) {
         let self = this;
@@ -116,12 +121,12 @@ class ShapeEvent {
             selector: '#' + id,
             callback: function (key) {
                 if (key == 'addFolder') {
-                    let folderEvent = new FolderEvent();
-                    folderEvent.add(this[0], self.canvas);
+                    let popup = new Popup();
+                	popup.create(new FolderEvent(), 'add', [this[0], self.canvas]);
 
                 } else if (key == 'addED') {
-                    let edEvent = new EDEvent();
-                    edEvent.add(this[0], self.canvas);
+                	let popup = new Popup();
+                	popup.create(new EDEvent(), 'add', [this[0], self.canvas]);
 
                 } else if (key == 'remove') {
                     if (this[0].shape instanceof FolderShape) {

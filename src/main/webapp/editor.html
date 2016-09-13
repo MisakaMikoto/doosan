@@ -54,17 +54,27 @@
         <!--  aras -->
         <script type="text/javascript" src="./src/aras/prototype/aras.js"></script>
         <script type="text/javascript" src="./src/aras/select/select.js"></script>
+        <script type="text/javascript" src="./src/aras/popup/popup.js"></script>
         
         <!--  rest -->
         <script type="text/javascript" src="./src/rest/prototype/rest.js"></script>
         <script type="text/javascript" src="./src/rest/selectBox/selectBoxRest.js"></script>
         
+        <!--  modal dialog -->
+         <script type="text/javascript" src="./src/util/modaldialog.js"></script>
         
         <style type="text/css">
         </style>
 
         <script type="text/javascript">
-            $(document).ready(function() {
+            // this page is only once load (this page include parent page's iframe)
+            // then use jQuery one
+            $(document).one('ready', function() {
+            	// dojo bug fix
+            	$('.dijitDialogPaneContent', parent.document).css('width', '');
+            	let parentDojoHeight = $('.dijitDialogPaneContent', parent.document).height();
+            	$('.dijitDialogPaneContent', parent.document).find('iframe').css('height', parentDojoHeight - 5);
+            	
             	// create load aras data
             	let select = new Select();
             	let inResult = select.load('DHI_WF_EDITOR_STRUCTURE', 'IN');
@@ -95,8 +105,8 @@
         </script>
     </head>
     <body>
-        <div align="center" id="container" style="width: 100%; height: 1000px;">
-            <div id="top" align="center" style="width: 100%; height: 300px;">
+        <div align="center" id="container" style="width: 100%; height: 851.6px;">
+            <div id="top" align="center" style="width: 100%; height: 201.6px;">
                 <div id="otherWorkFlow" style="float: left; width: 50%">
                     <table class="table">
                         <tbody>
@@ -164,10 +174,10 @@
                     </table>
                 </div>
 
-                <div id="myWorkFlow" style="float: left; width: 50%">
+                <div id="myWorkFlow" style="float: left; width: 50%;">
                     <table class="table">
                         <tbody>
-                        <tr rowspan="2" style="height: 136.5px">
+                        <tr rowspan="2" style="height: 136.5px;">
                             <td>
                                 My WorkFlow
                             </td>
@@ -200,8 +210,8 @@
                             <td colspan="3" style="padding-right: 20px;">
                                 <div class="btn-group" style="float: right">
                                     <button type="button" class="btn btn-default"> Activity </button>
-                                    <button type="button" class="btn btn-default"> Folder </button>
-                                    <button type="button" class="btn btn-default"> ED </button>
+                                    <button type="button" class="btn btn-default" onclick="javascript: new Popup().reflect(new FolderShape());"> Folder </button>
+                                    <button type="button" class="btn btn-default" onclick="javascript: new Popup().reflect(new EdShape());"> ED </button>
                                     <button type="button" class="btn btn-default"> Refresh </button>
                                 </div>
                             </td>
@@ -211,8 +221,8 @@
                 </div>
             </div>
 
-            <div style="height:700px;">
-                <div id="canvas" style="overflow:auto; width: 100%; height: 100%;"></div>
+            <div style="height:650px;">
+                <div id="canvas" style="overflow: auto; width: 100%; height: 100%;"></div>
                 <span id="draggable" style="width: 50px; height: 50px;"></span>
             </div>
         </div>
